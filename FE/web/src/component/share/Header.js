@@ -1,6 +1,6 @@
 import React from 'react';
 import {useHistory} from 'react-router-dom';
-import logo from '../../image/logot.png';
+import logo from '../../image/dulichvietnam.jpg';
 import '../../style/style.scss';
 import Profile from './Profile';
 
@@ -16,7 +16,7 @@ export default function Header({ isLogin, tokenParams }) {
         }
     }
     return (
-        <div style={{ width: '100%', height: 80 }}>
+        <div style={{ width: '100%', height: 100 }}>
             <header>
                 <div className="wrapper__header">
                     <div className="container__header container">

@@ -1,6 +1,6 @@
 import React, {useState} from 'react';
 import API from '../../lib/API';
-import logo from '../../image/login/logo-travelSupport.png';
+import logo from '../../image/login/logo-travel.png';
 import {useHistory} from 'react-router-dom'
 
 export default function ForgotPassword() {

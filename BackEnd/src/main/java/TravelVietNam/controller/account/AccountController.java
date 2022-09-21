@@ -1,4 +1,4 @@
-package TravelVietNam.controller.acount;
+package TravelVietNam.controller.account;
 
 import TravelVietNam.constant.Constants;
 import TravelVietNam.constant.PropertyKeys;

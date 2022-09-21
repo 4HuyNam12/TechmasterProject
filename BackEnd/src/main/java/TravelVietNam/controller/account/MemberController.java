@@ -1,4 +1,4 @@
-package TravelVietNam.controller.acount;
+package TravelVietNam.controller.account;
 
 
 import TravelVietNam.common.type.BookingStatus;

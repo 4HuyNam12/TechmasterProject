@@ -6,7 +6,7 @@ export default function BookingTable() {
         <>
             <div className="wrapper__booking-table">
                 <div className="sign__up--text">
-                    Hãy <span className="sign__up">Đăng Ký</span> ngay nếu bạn chưa có tài khoản tại Travel Support!
+                    Hãy <span className="sign__up">Đăng Ký</span> ngay nếu bạn chưa có tài khoản tại Du Lịch Việt Nam!
                 </div>
                 <div className="content__booking">
                     <div className="info__booking--ticket">

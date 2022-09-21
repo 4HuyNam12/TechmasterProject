@@ -2,7 +2,7 @@ import React, {useState} from 'react';
 import {useHistory} from 'react-router-dom';
 import API from '../../lib/API';
 
-import logo from '../../image/login/logo-travelSupport.png';
+import logo from '../../image/login/logo-travelSupport1.png';
 
 export default function ResetPassword() {
     let history = useHistory()
@@ -36,7 +36,7 @@ export default function ResetPassword() {
                 <div className="wrapper__sign">
                     <img alt="" className="logo" src={logo} alt=""   onClick={() => history.push('/login')} style={{cursor:'pointer'}} />
                     <div className="title">
-                        <h1>Đăng Nhập <br />Để Khám Phá Điều Tuyệt Vời Nhất Của Travel Support</h1>
+                        <h1>Đăng Nhập <br />Để Khám Phá Điều Tuyệt Vời Nhất Của Du Lịch Việt Nam</h1>
                     </div>
                     <div className="sign-with">
                         <div className="item">

@@ -10,7 +10,7 @@ export default function Footer() {
                         <div className="col-6 col__introduce col__footer" style={{display:'flex',justifyContent:'center'}}>
                             <div className="col__wrapper" style={{paddingLeft:0}}>
                                 <h3 className="title-col">Về chúng tôi:</h3>
-                                <p>Travel support là một ứng dụng web được phát triển bởi học viên của Techmaster.vn  Với mục tiêu mang lại cho cộng đồng yêu du lịch Việt Nam
+                                <p>Du Lịch Việt Nam là một ứng dụng web được phát triển bởi học viên của Techmaster.vn  Với mục tiêu mang lại cho cộng đồng yêu du lịch Việt Nam
                                     một trang web có thể hỗ trợ việc tìm kiếm thông tin và liên hệ với các đơn vị dịch vụ dễ dàng hơn.
                         
                                 </p>

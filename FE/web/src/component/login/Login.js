@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import {useHistory} from 'react-router-dom';
-import logo from '../../image/login/logo-travelSupport.png';
+import logo from '../../image/login/logo-travel.png';
 import API from '../../lib/API';
 import '../../style/login.scss';
 
@@ -84,7 +84,7 @@ export default function Login({ handleLogin }) {
                                     <img alt="" src={logo} />
                                 </div>
                     <div className="title">
-                        <h1>Đăng Nhập <br />Để Khám Phá Điều Tuyệt Vời Nhất Của Travel Support</h1>
+                        <h1>Đăng Nhập <br />Để Khám Phá Điều Tuyệt Vời Nhất Của Du lịch Việt Nam</h1>
                     </div>
                     <div className="sign-with">
                         <div className="item">

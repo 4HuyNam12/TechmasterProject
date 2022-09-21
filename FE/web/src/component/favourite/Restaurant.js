@@ -1,5 +1,5 @@
 import React, {useRef} from 'react';
-import Slider from 'react-slick';
+    import Slider from 'react-slick';
 import {useHistory} from 'react-router-dom';
 import {BASE_URL_DOWNLOAD} from '../../lib/API';
 
@@ -41,7 +41,7 @@ export default function Restaurant({ data }) {
                                         <path fill="currentColor" d="M15.41,16.58L10.83,12L15.41,7.41L14,6L8,12L14,18L15.41,16.58Z" />
                                     </svg>
                                 </div>
-                                <Slider ref={ref} slidesToScroll={1} slidesToShow={3} >
+                                <Slider ref={ref} slidesToScroll={1} slidesToShow={3}  autoplay={true} autoplaySpeed={2000} >
                                     {data?.map((item, index) => {
                                         return (
                                             <div className=" col-item" key={index}

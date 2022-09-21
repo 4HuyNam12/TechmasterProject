@@ -80,7 +80,7 @@ export default function BookingRoom({ hotelCode, packageId }) {
                     onClick={() => {
                         history.push('/register')
                     }}
-                    >Đăng Ký</span> ngay nếu bạn chưa có tài khoản tại Travel Support!
+                    >Đăng Ký</span> ngay nếu bạn chưa có tài khoản tại Du Lịch Việt Nam!
                 </div> */}
 
                 <form className="content__booking"

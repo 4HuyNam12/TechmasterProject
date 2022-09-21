@@ -4,8 +4,8 @@ import {useHistory} from 'react-router-dom';
 import {BASE_URL_DOWNLOAD} from '../../lib/API';
 
 export default function Activity({ data }) {
-    const ref = useRef({});
     let history = useHistory()
+    const ref = useRef({});
     const next = () => {
         ref.current.slickNext();
     };

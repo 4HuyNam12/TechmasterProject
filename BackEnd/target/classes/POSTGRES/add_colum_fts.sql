@@ -1,1 +1,0 @@
-ALTER TABLE public.hotel ADD ts_search tsvector NULL;

@@ -3,7 +3,7 @@ import {useHistory} from 'react-router-dom';
 import API from '../../lib/API';
 import {Controller, useForm} from "react-hook-form";
 
-import logo from '../../image/login/logo-travelSupport.png';
+import logo from '../../image/login/logo-travel.png';
 import moment from 'moment';
 
 export default function Register() {
@@ -40,7 +40,7 @@ export default function Register() {
                 <div className="wrapper__sign">
                     <img alt="" className="logo" src={logo} alt="" onClick={() => history.push('/login')} style={{ cursor: 'pointer' }} />
                     <div className="title">
-                        <h1>Đăng Ký <br />Để Khám Phá Điều Tuyệt Vời Nhất Của Travel Support</h1>
+                        <h1>Đăng Ký <br />Để Khám Phá Điều Tuyệt Vời Nhất Của Du Lịch Việt Nam</h1>
                     </div>
                     <div className="sign-with">
 

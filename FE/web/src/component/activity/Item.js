@@ -15,7 +15,6 @@ export default function Item({ slug, image, favourite, searchFavourite, type }) 
     let fetchData = async () => {
         let path = `/activities/${slug}`;
         let resp = await API.anonymousJSONGETHOTEL(path);
-        console.log(path)
         if (resp.ok) {
             let response = await resp.json();
             setData(response?.data)

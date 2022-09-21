@@ -14,7 +14,7 @@ export default function UniquePlace() {
         if (resp.ok) {
             let response = await resp.json();
             let arr = [];
-            for (let i = 5; i < 10; i++) {
+            for (let i = 0; i < 5; i++) {
                 arr.push(response?.data[i])
             }
             setItems(arr)

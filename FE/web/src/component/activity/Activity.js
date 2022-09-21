@@ -45,11 +45,9 @@ export default function Activity() {
 
     let search = async () => {
         let path = `/search/activities/search-filter?q=${text}&type=${type}&durationFrom=${duration?.from}&durationTo=${duration?.to}&page=${activePage}&perPage=${LIMITS}`;
-        console.log(path)
         let resp = await API.anonymousJSONGETHOTEL(path);
         if (resp.ok) {
             let response = await resp.json();
-            console.log(response)
             setData(response?.data)
         }
     }

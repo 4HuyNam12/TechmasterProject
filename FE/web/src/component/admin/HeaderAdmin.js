@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import {useHistory} from 'react-router-dom';
-import logo from '../../image/logot.png';
+import logo from '../../image/dulichvietnam.jpg';
 import API, {BASE_URL_DOWNLOAD} from '../../lib/API';
 import '../../style/style.scss';
 
