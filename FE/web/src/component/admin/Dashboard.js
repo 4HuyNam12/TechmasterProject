@@ -34,7 +34,6 @@ export default function Dashboard({ isPage }) {
             {page === "post" && <Post />}
             {page === "account" && <Account />}
             {page === "profile" && <Profile />}
-
             {(page == "hotel" && (roleId == 1 || roleId == 2)) && <Hotel />}
             {(page == "hotel" && (roleId == 4)) && <HotelPartner />}
             {(page == "activity" && (roleId == 1 || roleId == 2)) && <Activity />}

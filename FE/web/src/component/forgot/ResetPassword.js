@@ -2,7 +2,7 @@ import React, {useState} from 'react';
 import {useHistory} from 'react-router-dom';
 import API from '../../lib/API';
 
-import logo from '../../image/login/logo-travelSupport1.png';
+import logo from '../../image/login/logo-travelSupport.png';
 
 export default function ResetPassword() {
     let history = useHistory()
