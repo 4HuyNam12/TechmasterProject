@@ -7,14 +7,18 @@ import logo from '../../image/login/logo-travel.png';
 import moment from 'moment';
 import Popup from '../popup/Popup';
 
-export default function Register() {
+export default function Register({ show, handleClose }) {
     const { control, reset, handleSubmit, formState: { errors } } = useForm();
+    // let [message, setMessage] = useState()
     const [isPopup, setIsPopup] = useState(false);
 	const [popupMessage, setPopupMessage] = useState("");
     const handleClosePopup = () => {
+        let success = popupMessage;
         setIsPopup(false);
         setPopupMessage("");
-        history.push('/login')
+        if (success === "Đăng ký tài khoản thành công!") {
+            history.push('/login');
+        }
     };
 
     const handleOpenPopup = (message) => {
@@ -39,8 +43,10 @@ export default function Register() {
         if (resp.ok) {
             handleOpenPopup("Đăng ký tài khoản thành công!");
             // history.push('/login')
+            // setMessage("")                                                                                                                                                                                                                 
+            //     reset()
         } else {
-            let response = await resp.json()
+            let response = await resp.json();
             response.message ? handleOpenPopup(response.message) : handleOpenPopup("Đã xảy ra lỗi, vui lòng kiểm tra lại!")
             
         }
@@ -93,10 +99,12 @@ export default function Register() {
                                 </div>
                             )}
                             name="email"
-                            rules={{ required: true, minLength: 3, maxLength: 50 }}
+                            rules={{ required: true, minLength: 3, maxLength: 50 ,pattern :/^(.+)@(\S+)$/}}
                             defaultValue=""
                         />
-                        {errors.email && <span style={{ color: 'red' }}>Trường này không được bỏ trống *</span>}
+                        {/* {errors.email && <span style={{ color: 'red' }}>Trường này không được bỏ trống *</span>} */}
+                        {errors.email?.type == "required" && <span style={{ color: 'red' }}>Trường này không được bỏ trống *</span>}
+                        {errors.email?.type == "pattern" && <span style={{ color: 'red' }}>Email chưa đúng định dạng *</span>}
                         <Controller
                             control={control}
                             render={({ field: { onChange, onBlur, value } }) => (
@@ -113,7 +121,7 @@ export default function Register() {
                                 </div>
                             )}
                             name="password"
-                            rules={{ required: true, minLength: 3, maxLength: 50 }}
+                            rules={{ required: true, minLength: 1, maxLength: 50 }}
                             defaultValue=""
                         />
                         {errors.password && <span style={{ color: 'red' }}>Trường này không được bỏ trống *</span>}
@@ -156,6 +164,7 @@ export default function Register() {
                             rules={{ required: true, minLength: 3, maxLength: 50 }}
                             defaultValue=""
                         />
+                        {errors.dob?.type == "required" && <span style={{ color: 'red' }}>Hãy chọn ngày sinh *</span>}
                         <Controller
                             control={control}
                             render={({ field: { onChange, onBlur, value } }) => (

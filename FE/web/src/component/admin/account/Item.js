@@ -22,13 +22,12 @@ export default function Item({ index, data, search }) {
     const deleteItem = async () => {
         let message = window.confirm("Bạn chắc chắn muốn xóa tài khoản?");
         if(message){
-            let path = `/admin/adcount/delete/${data?.id}`;
+            let path = `/admin/account/delete/${data?.id}`;
             let resp = await API.authorizedJSONDelete(path);
             if (resp.ok) {
                 search()
             }
         }
-        
     }
     return (
         <>

@@ -7,7 +7,7 @@ import Popup from '../../popup/Popup';
 
 export default function ChangePassword({ show, handleClose }) {
     const { control, reset, handleSubmit, formState: { errors }, register } = useForm();
-    let [message, setMessage] = useState();
+    let [message, setMessage] = useState()
     const [isPopup, setIsPopup] = useState(false);
     const [popupMessage, setPopupMessage] = useState("");
     const handleClosePopup = () => {
@@ -31,15 +31,15 @@ export default function ChangePassword({ show, handleClose }) {
             }
             let resp = await API.authorizedJSONPost(path, objReq);
             if (resp.ok) {
-                handleOpenPopup("Bạn đã thay đổi mật khẩu thành công")
+                handleOpenPopup("Đổi mật khẩu thành công")
                 handleClose()
-                setMessage()
+                setMessage("")                                                                                                                                                                                                                 
                 reset()
             } else {
                 let response = await resp.json();
-                debugger;
-                alert(response);
+                // console.log(response?.message)
                 setMessage(response?.message);
+                // reset()
             }
 
         }
@@ -48,7 +48,7 @@ export default function ChangePassword({ show, handleClose }) {
     return (
         <>
             <Popup isPopup={isPopup} popupMessage={popupMessage} handleClosePopup={() => handleClosePopup()} />
-            <Modal show={show} onHide={() => {
+            <Modal  show={show} onHide={() => {
                 handleClose()
                 reset()
                 setMessage("")
@@ -58,7 +58,9 @@ export default function ChangePassword({ show, handleClose }) {
                 </Modal.Header>
 
                 <Modal.Body>
-                    <div className="menu__item--error" style={{ width: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center' }}> {message && <span>{message}</span>}</div>
+                    
+                    <div className="menu__item--error" style={{ color: 'red', width: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center' }}> {message && <span>{message}</span>}</div>
+                    
                     <ul className="menu">
                         <li className="menu__item">
                             <div className="menu__item--title">Mật khẩu:</div>

@@ -15,7 +15,7 @@ import java.util.List;
 
 public class FileStore {
 
-    public static String UPLOAD_FOLDER =Paths.get(System.getProperty("user.dir"),"BackEnd","src","main","resources","images").toString();
+    public static String UPLOAD_FOLDER = Paths.get(System.getProperty("user.dir"), "BackEnd", "src", "main", "resources", "images").toString();
 
     public static List<String> getFilePaths(List<MultipartFile> multipartFiles, String prefix) {
         List<String> images = new ArrayList<String>();
@@ -43,13 +43,15 @@ public class FileStore {
         return images;
     }
 
-    public static String getDefaultAvatar()  {
+    public static String getDefaultAvatar() {
         try {
-            String fileName = "avatar-" + RandomStringUtils.random(10, true, true) ;
-            BufferedImage image = ImageIO.read(new File(UPLOAD_FOLDER+ "/avatardefault.png"));
-            ImageIO.write(image, "png", new File(UPLOAD_FOLDER + fileName + ".png"));
+            String fileName = "avatar-" + RandomStringUtils.random(10, true, true);
+            BufferedImage image = ImageIO.read(new File(UPLOAD_FOLDER + File.separator + "avatardefault.png"));
+            System.out.println(UPLOAD_FOLDER);
+            System.out.println(UPLOAD_FOLDER + File.separator + "avatardefault.png");
+            ImageIO.write(image, "png", new File(UPLOAD_FOLDER + File.separator + fileName + ".png"));
 
-            return fileName +".png";
+            return fileName + ".png";
         } catch (Exception e) {
             return null;
         }

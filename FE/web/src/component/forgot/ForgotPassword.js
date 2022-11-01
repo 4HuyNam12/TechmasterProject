@@ -20,8 +20,9 @@ export default function ForgotPassword() {
             
 
         } else {
-            // let response = await resp.json()
-            // setMessage(response?.message)
+            let response = await resp.json();
+            console.log(response);
+            setMessage(response?.message);
         }
     }
 

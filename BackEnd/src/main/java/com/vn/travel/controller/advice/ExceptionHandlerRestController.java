@@ -1,12 +1,16 @@
 package com.vn.travel.controller.advice;
 
+import com.vn.travel.exception.ApiError;
 import com.vn.travel.exception.ErrorCode;
 import com.vn.travel.exception.GeneralException;
+import com.vn.travel.exception.RestApiException;
 import com.vn.travel.response.BaseResponse;
 import com.vn.travel.response.ErrorResponse;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.apache.kafka.common.errors.ApiException;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.MissingServletRequestParameterException;
@@ -61,6 +65,11 @@ public class ExceptionHandlerRestController {
                 .build();
 
         return BaseResponse.error(error);
+    }
+    @ExceptionHandler({RestApiException.class})
+    public ResponseEntity<?> handlerException(Exception ex) {
+        ApiError apiError = new ApiError(500,ex.getMessage());
+        return new ResponseEntity<>(apiError, HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(Exception.class)
