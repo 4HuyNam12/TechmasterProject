@@ -1,14 +1,33 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import '../../style/booking/booking-room-result.scss';
 import '../../style/booking/booking-ticket-result.scss';
 import moment from 'moment';
+import Popup from '../popup/Popup';
 
 export default function BookingRestaurantResult({ data }) {
-    console.log(data);
 
+    const [isPopup, setIsPopup] = useState(false);
+    const [popupMessage, setPopupMessage] = useState("");
+
+    const handleClosePopup = () => {
+        setIsPopup(false);
+        setPopupMessage("");
+
+    };
+
+    const handleOpenPopup = (message) => {
+        setIsPopup(true);
+        setPopupMessage(message);
+
+
+    };
+    useEffect(()=>{
+        handleOpenPopup("Bạn đã đặt thành công!");
+    },[]);
     return (
 
         <>
+            <Popup isPopup={isPopup} popupMessage={popupMessage} handleClosePopup={() => handleClosePopup()} />
             <div className="wrapper__booking-room--result">
                 <div className="result__booking">
                     <div className="hotel__detail">

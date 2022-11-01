@@ -3,14 +3,16 @@ import {useHistory} from 'react-router-dom';
 import logo from '../../image/login/logo-travel.png';
 import API from '../../lib/API';
 import '../../style/login.scss';
+import Popup from '../popup/Popup';
 
 export default function Login({ handleLogin }) {
     let [account, setAccount] = useState();
     let history = useHistory();
-    const [message, setMessage] = useState();
+    // const [message, setMessage] = useState();
+    const [isPopup, setIsPopup] = useState(false);
+    const [popupMessage, setPopupMessage] = useState("");
 
     let login = async () => {
-
         let path = "/login";
         let resp = await API.anonymousJSONPost(path, account);
         if (resp.ok) {
@@ -60,9 +62,21 @@ export default function Login({ handleLogin }) {
 
 
         } else {
-            alert("Tài khoản đăng nhập chưa đúng!")
+           // alert("Tài khoản đăng nhập chưa đúng!")
+
+            handleOpenPopup("Tài khoản đăng nhập chưa đúng!");
         }
     }
+
+    const handleClosePopup = () => {
+        setIsPopup(false);
+        setPopupMessage("");
+    };
+
+    const handleOpenPopup = (message) => {
+        setIsPopup(true);  
+        setPopupMessage(message);
+    };
 
 
     useEffect(() => {
@@ -73,7 +87,9 @@ export default function Login({ handleLogin }) {
     }, [])
     return (
         <>
+            <Popup isPopup={isPopup} popupMessage={popupMessage} handleClosePopup={() => handleClosePopup()}/>
             <div className="main__login">
+           
                 <div className="dark-bg"></div>
                 <div className="wrapper__sign">
                     {/* <img alt="" className="logo" src={logo} alt="" /> */}
@@ -109,7 +125,7 @@ export default function Login({ handleLogin }) {
                                 })}
                             />
                         </div>
-                        {message && <p style={{ color: 'red' }}>{message}</p>}
+                        {/*{message && <p style={{ color: 'red' }}>{message}</p>}*/}
                         <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }} className="btn__login-hover">
                             <button onClick={() => {
                                 login()

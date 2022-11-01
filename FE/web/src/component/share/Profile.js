@@ -7,15 +7,13 @@ export default function Profile({ isLogin, tokenParams }) {
     const token = localStorage.getItem("token");
 
     const [user, setUser] = useState();
-    // useEffect(() => {
-    //     search()
-    // }, []);
-    useEffect(() => {
-        search()
-    }, [isLogin]);
     useEffect(() => {
         search()
     }, []);
+    // useEffect(() => {
+    //     search()
+    // }, [isLogin]);
+
     const search = async () => {
         try {
             let path = '/member/account/profile';
@@ -25,7 +23,6 @@ export default function Profile({ isLogin, tokenParams }) {
                 setUser(response)
             } else {
                 let response = await resp.json();
-                console.log(response)
             }
         } catch (error) {
             console.log(error)

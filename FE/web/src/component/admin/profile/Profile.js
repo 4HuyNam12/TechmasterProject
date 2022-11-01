@@ -39,7 +39,7 @@ export default function Profile() {
     const handleClose = () => {
         setShow(false)
     }
-    console.log(user)
+
     return (
         <>
             <div style={{display:'flex',justifyContent:'space-around',alignItems:'center',marginTop:100}}>

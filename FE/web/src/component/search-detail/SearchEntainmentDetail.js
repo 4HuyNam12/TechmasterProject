@@ -21,7 +21,6 @@ export default function SearchEntainmentDetail() {
             setGames(response?.data?.games)
         }
     }
-    console.log(activities?.code)
     useEffect(() => {
         search()
     }, [slug]);

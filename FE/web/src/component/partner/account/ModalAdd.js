@@ -1,15 +1,28 @@
-import React, {useState} from 'react';
+import React, { useState } from 'react';
 import Modal from 'react-bootstrap/Modal';
-import {Button} from 'react-bootstrap';
-import {useForm} from "react-hook-form";
+import { Button } from 'react-bootstrap';
+import { useForm } from "react-hook-form";
 import API from '../../../lib/API';
-import {roles} from '../../../utils/amenities';
+import { roles } from '../../../utils/amenities';
+import Popup from '../../popup/Popup';
 
 export default function ModalAdd({ show, handleClose, handleShow, search }) {
 
     const { register, handleSubmit, watch, formState: { errors }, reset } = useForm();
 
     const [message, setMessage] = useState();
+    const [isPopup, setIsPopup] = useState(false);
+    const [popupMessage, setPopupMessage] = useState("");
+
+    const handleClosePopup = () => {
+        setIsPopup(false);
+        setPopupMessage("");
+    };
+
+    const handleOpenPopup = (message) => {
+        setIsPopup(true);
+        setPopupMessage(message);
+    };
 
 
 
@@ -17,7 +30,7 @@ export default function ModalAdd({ show, handleClose, handleShow, search }) {
         let path = '/admin/account/add';
         let resp = await API.authorizedJSONPost(path, data);
         if (resp.ok) {
-            alert("Thêm tài khoản thành công!")
+            handleOpenPopup("Thêm tài khoản thành công!")
             handleClose()
             search()
             reset(null)
@@ -28,7 +41,7 @@ export default function ModalAdd({ show, handleClose, handleShow, search }) {
     }
     return (
         <>
-
+            <Popup isPopup={isPopup} popupMessage={popupMessage} handleClosePopup={() => handleClosePopup()} />
             <Modal show={show}
                 onHide={() => {
                     handleClose()

@@ -2,17 +2,22 @@ import React, {useState} from 'react';
 import API from '../../lib/API';
 import logo from '../../image/login/logo-travel.png';
 import {useHistory} from 'react-router-dom'
+import Popup from '../popup/Popup';
 
 export default function ForgotPassword() {
     const [email, setEmail] = useState();
     const [message, setMessage] = useState();
+    const [isPopup, setIsPopup] = useState(false);
+    const [popupMessage, setPopupMessage] = useState("");
+
+
     let history = useHistory();
     const forgot = async () => {
         let path = `/forward-password?email=${email}`;
         let resp = await API.anonymousJSONPost(path);
         if (resp.ok) {
-            alert("Vui lòng check mail")
-            history.push('/forward-password')
+            handleOpenPopup("Vui lòng check mail")
+            
 
         } else {
             // let response = await resp.json()
@@ -20,8 +25,21 @@ export default function ForgotPassword() {
         }
     }
 
+    const handleClosePopup = () => {
+        setIsPopup(false);
+        setPopupMessage("");
+        history.push('/forward-password')
+    };
+
+    const handleOpenPopup = (message) => {
+        setIsPopup(true);  
+        setPopupMessage(message);
+    };
+
+
     return (
         <>
+          <Popup isPopup={isPopup} popupMessage={popupMessage} handleClosePopup={() => handleClosePopup()}/>
             <div className="main__login">
                 <div className="dark-bg"></div>
                 <div className="wrapper__sign">

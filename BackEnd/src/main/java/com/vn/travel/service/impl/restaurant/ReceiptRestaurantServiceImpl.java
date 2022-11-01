@@ -1,6 +1,7 @@
 package com.vn.travel.service.impl.restaurant;
 
 import com.vn.travel.common.type.BookingStatus;
+import com.vn.travel.constant.StatusCode;
 import com.vn.travel.dao.AccountDAO;
 import com.vn.travel.entity.BookingContact;
 import com.vn.travel.entity.account.Account;
@@ -10,6 +11,7 @@ import com.vn.travel.entity.restaurant.RestaurantMenu;
 import com.vn.travel.exception.ErrorCode;
 import com.vn.travel.exception.GeneralException;
 import com.vn.travel.exception.ResourceNotFoundException;
+import com.vn.travel.exception.RestApiException;
 import com.vn.travel.repository.FavoriteRepository;
 import com.vn.travel.repository.restaurant.RestaurantBookingReceiptRepository;
 import com.vn.travel.repository.restaurant.RestaurantImageRepository;
@@ -33,10 +35,7 @@ import org.springframework.stereotype.Component;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Component
 @Log4j2
@@ -75,31 +74,35 @@ public class ReceiptRestaurantServiceImpl implements ReceiptRestaurantService {
 
             Restaurant restaurant = restaurantRepository.findFirstByCode(bookingRestaurantRequest.getRestaurantCode());
 
-            Account account = accountDAO.getAccountById(restaurant.getUserId());
+            Optional<Account> result = accountDAO.getAccountById(restaurant.getUserId());
+            if (result.isPresent()) {
+                Account account = result.get();
+                List<String> restaurantImages = restaurantImageRepository.findAllByRestaurantCode(restaurant.getCode());
+                RestaurantInfoDTO restaurantInfoDTO = MappingUtils.map(restaurant, RestaurantInfoDTO.class);
+                List<RestaurantMenu> restaurantMenuList = restaurantMenuRepository.findAllByRestaurantCode(restaurant.getCode());
 
-            List<String> restaurantImages = restaurantImageRepository.findAllByRestaurantCode(restaurant.getCode());
-            RestaurantInfoDTO restaurantInfoDTO = MappingUtils.map(restaurant, RestaurantInfoDTO.class);
-            List<RestaurantMenu> restaurantMenuList = restaurantMenuRepository.findAllByRestaurantCode(restaurant.getCode());
+                restaurantInfoDTO.setImagesList(restaurantImages);
+                restaurantInfoDTO.setMenuDTOList(MappingUtils.map(restaurantMenuList, RestaurantMenuDTO.class));
 
-            restaurantInfoDTO.setImagesList(restaurantImages);
-            restaurantInfoDTO.setMenuDTOList(MappingUtils.map(restaurantMenuList, RestaurantMenuDTO.class));
+                RestaurantBookingReceipt receipt = RestaurantBookingReceipt.builder()
+                        .bookingId(bookingId)
+                        .restaurantInfoDTO(restaurantInfoDTO)
+                        .contact(contact)
+                        .userId(userId)
+                        .phonePartner(account.getPhone())
+                        .partnerId(restaurant.getUserId())
+                        .numberChild(bookingRestaurantRequest.getNumberChild())
+                        .numberAdult(bookingRestaurantRequest.getNumberAdult())
+                        .checkinDay(bookingRestaurantRequest.getCheckinDate())
+                        .checkinTime(bookingRestaurantRequest.getCheckinTime())
+                        .status(BookingStatus.BOOKING_PENDING)
+                        .build();
 
-            RestaurantBookingReceipt receipt = RestaurantBookingReceipt.builder()
-                    .bookingId(bookingId)
-                    .restaurantInfoDTO(restaurantInfoDTO)
-                    .contact(contact)
-                    .userId(userId)
-                    .phonePartner(account.getPhone())
-                    .partnerId(restaurant.getUserId())
-                    .numberChild(bookingRestaurantRequest.getNumberChild())
-                    .numberAdult(bookingRestaurantRequest.getNumberAdult())
-                    .checkinDay(bookingRestaurantRequest.getCheckinDate())
-                    .checkinTime(bookingRestaurantRequest.getCheckinTime())
-                    .status(BookingStatus.BOOKING_PENDING)
-                    .build();
-
-            receipt = restaurantBookingReceiptRepository.save(receipt);
-            return BaseResponse.ok(MappingUtils.map(receipt, RestaurantBookingReceiptDTO.class));
+                receipt = restaurantBookingReceiptRepository.save(receipt);
+                return BaseResponse.ok(MappingUtils.map(receipt, RestaurantBookingReceiptDTO.class));
+            } else {
+                throw new RestApiException(StatusCode.ACCOUNT_NOT_EXIST);
+            }
         } catch (Exception ex) {
             log.error("IOException:" + ex.getMessage(), ex);
             throw new GeneralException();

@@ -26,14 +26,12 @@ export default function HeaderAdmin({ handlePage,isLogin }) {
                 setUser(response)
             } else {
                 let response = await resp.json();
-                console.log(response)
             }
         } catch (error) {
             console.log(error)
 
         }
     }
-    console.log(user)
     return (
         <>
             <header>

@@ -63,14 +63,14 @@ public class PostServiceImplTest {
 
     @Test
     public void testUpdate() {
-        Mockito.when(postDAO.getPostById(Mockito.anyString())).thenReturn(post);
+        Mockito.when(postDAO.getPostById(Mockito.anyString())).thenReturn(java.util.Optional.ofNullable(post));
         Mockito.when(postDAO.save(post)).thenReturn(post);
         postServiceImpl.update( "1", postRequest);
     }
 
     @Test
     public void testGetById() {
-        Mockito.when(postDAO.getPostById(Mockito.anyString())).thenReturn(post);
+        Mockito.when(postDAO.getPostById(Mockito.anyString())).thenReturn(java.util.Optional.ofNullable(post));
         postServiceImpl.getById("1");
     }
 

@@ -5,6 +5,7 @@ import {Controller, useForm} from "react-hook-form";
 import API, {BASE_URL_DOWNLOAD} from '../../../lib/API';
 import {typeActivity} from '../../../utils/amenities';
 import LoadingProgress from '../../LoadingProgress';
+import Popup from '../../popup/Popup';
 
 export default function ModalUpdate({ handleClose, handleShow, show, data, images, search, activitiesCode, type }) {
 
@@ -13,11 +14,23 @@ export default function ModalUpdate({ handleClose, handleShow, show, data, image
     const [fileList, setFileList] = useState();
     const [imageList, setImageList] = useState([]);
     const [message, setMessage] = useState();
-    const [loading, setLoading] = useState(false)
+    const [loading, setLoading] = useState(false);
+    
 
     let [arrAmenities, setArrAmenities] = useState([])
 
+    const [isPopup, setIsPopup] = useState(false);
+	const [popupMessage, setPopupMessage] = useState("");
 
+const handleClosePopup = () => {
+        setIsPopup(false);
+        setPopupMessage("");
+    };
+
+    const handleOpenPopup = (message) => {
+        setIsPopup(true);  
+        setPopupMessage(message);
+    };
 
     let onSubmit = async (form) => {
         console.log(form)
@@ -51,7 +64,7 @@ export default function ModalUpdate({ handleClose, handleShow, show, data, image
 
                 } else {
                     setLoading(false)
-                    alert("Yêu cầu điền đầy đủ thông tin!")
+                    handleOpenPopup("Yêu cầu điền đầy đủ thông tin!")
                 }
             } else {
                 let path = '/partner/activities/update';
@@ -81,7 +94,7 @@ export default function ModalUpdate({ handleClose, handleShow, show, data, image
 
                 } else {
                     setLoading(false)
-                    alert("Yêu cầu điền đầy đủ thông tin!")
+                    handleOpenPopup("Yêu cầu điền đầy đủ thông tin!")
                 }
             }
 
@@ -113,6 +126,7 @@ export default function ModalUpdate({ handleClose, handleShow, show, data, image
 
     return (
         <>
+        <Popup isPopup={isPopup} popupMessage={popupMessage} handleClosePopup={() => handleClosePopup()}/>
             <Modal show={show}
                 onHide={() => {
                     handleClose()

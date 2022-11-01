@@ -27,9 +27,8 @@ export default function Post() {
         if (resp.ok) {
             let response = await resp.json();
             let arr = Object.keys(response.data).map((k) => response.data[k]);
-            response.data =arr;
+            response.data = arr;
             setData(response);
-            debugger;
         }
     }
     return (
@@ -79,7 +78,7 @@ export default function Post() {
                             </tr>
                         </thead>
                         {data?.totalElement >= 0 ?
-                            data?.data.map((item, idx) => {
+                            data?.data?.map((item, idx) => {
                                 return (
                                     <Item data={item} key={idx} index={parseInt(5 * (activePage - 1) + idx + 1)} search={search} />
                                 )
@@ -94,13 +93,13 @@ export default function Post() {
                         }
                     </table>
                 </div>
-                {data?.totalElement  > 0 ?
+                {data?.totalElement > 0 ?
                     <div className="wrapper-paginate">
                         <Pagination
                             activePage={activePage}
                             itemsCountPerPage={5}
                             totalItemsCount={parseInt(data?.totalElement)}
-                            pageRangeDisplayed={5}
+                            pageRangeDisplayed={3}
                             onChange={(item) => setActivePage(item)}
                         />
                     </div> : <></>

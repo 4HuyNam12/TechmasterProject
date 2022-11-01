@@ -17,9 +17,9 @@ export default function Activity() {
     const handleClose = () => {
         setShow(false)
     }
-    useEffect(() => {
-        search()
-    }, [])
+    // useEffect(() => {
+    //     search()
+    // }, [])
     useEffect(() => {
         search()
     }, [activePage])

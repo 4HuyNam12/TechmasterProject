@@ -36,7 +36,7 @@ export default function Activity() {
 
     const LIMITS = 3;
     useEffect(() => {
-        search()
+        //search()
         searchFavourite()
     }, [])
     useEffect(() => {

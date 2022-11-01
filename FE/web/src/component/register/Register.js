@@ -5,9 +5,22 @@ import {Controller, useForm} from "react-hook-form";
 
 import logo from '../../image/login/logo-travel.png';
 import moment from 'moment';
+import Popup from '../popup/Popup';
 
 export default function Register() {
     const { control, reset, handleSubmit, formState: { errors } } = useForm();
+    const [isPopup, setIsPopup] = useState(false);
+	const [popupMessage, setPopupMessage] = useState("");
+    const handleClosePopup = () => {
+        setIsPopup(false);
+        setPopupMessage("");
+        history.push('/login')
+    };
+
+    const handleOpenPopup = (message) => {
+        setIsPopup(true);  
+        setPopupMessage(message);
+    };
     let history = useHistory();
     let [gender, setGender] = useState(true);
     let onSumbit = async form => {
@@ -24,17 +37,17 @@ export default function Register() {
         console.log(objReq)
         let resp = await API.anonymousJSONPost(path, objReq);
         if (resp.ok) {
-            alert("Đăng ký tài khoản thành công!")
-            history.push('/login')
+            handleOpenPopup("Đăng ký tài khoản thành công!");
+            // history.push('/login')
         } else {
             let response = await resp.json()
-            response.message ? alert(response.message) : alert("Đã xảy ra lỗi, vui lòng kiểm tra lại!")
+            response.message ? handleOpenPopup(response.message) : handleOpenPopup("Đã xảy ra lỗi, vui lòng kiểm tra lại!")
             
         }
     }
-    console.log(errors.phone)
     return (
         <>
+        <Popup isPopup={isPopup} popupMessage={popupMessage} handleClosePopup={() => handleClosePopup()}/>
             <div className="main__login">
                 <div className="dark-bg"></div>
                 <div className="wrapper__sign">

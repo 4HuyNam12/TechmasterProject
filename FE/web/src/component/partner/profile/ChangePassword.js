@@ -3,12 +3,26 @@ import Modal from 'react-bootstrap/Modal';
 import {Button} from 'react-bootstrap';
 import {Controller, useForm} from "react-hook-form";
 import API from '../../../lib/API';
+import Popup from '../../popup/Popup';
 
 
 export default function ChangePassword({ show, handleClose, handleShow, search }) {
 
     const { register, handleSubmit, watch, formState: { errors }, reset } = useForm();
     const [message, setMessage] = useState();
+    const [isPopup, setIsPopup] = useState(false);
+	const [popupMessage, setPopupMessage] = useState("");
+
+const handleClosePopup = () => {
+        setIsPopup(false);
+        setPopupMessage("");
+    };
+
+    const handleOpenPopup = (message) => {
+        setIsPopup(true);  
+        setPopupMessage(message);
+    };
+    
 
     const [showSuccess, setShowSuccess] = useState(false);
     const handleCloseSuccess = () => {
@@ -30,7 +44,7 @@ export default function ChangePassword({ show, handleClose, handleShow, search }
                 setMessage("")
                 handleClose()
                 search()
-                alert("Bạn đã đổi mật khẩu thành công")
+                handleOpenPopup("Bạn đã đổi mật khẩu thành công")
             } else {
                 let response = await resp.json();
                 setMessage(response?.message)
@@ -40,6 +54,7 @@ export default function ChangePassword({ show, handleClose, handleShow, search }
     }
     return (
         <>
+        <Popup isPopup={isPopup} popupMessage={popupMessage} handleClosePopup={() => handleClosePopup()}/>
             <ModalSuccess showSuccess={showSuccess} handleCloseSuccess={handleCloseSuccess} />
             <Modal show={show}
                 onHide={() => {

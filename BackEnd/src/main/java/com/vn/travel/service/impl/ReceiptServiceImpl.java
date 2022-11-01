@@ -1,6 +1,7 @@
 package com.vn.travel.service.impl;
 
 import com.vn.travel.common.type.BookingStatus;
+import com.vn.travel.constant.StatusCode;
 import com.vn.travel.dao.AccountDAO;
 import com.vn.travel.entity.BookingContact;
 import com.vn.travel.entity.account.Account;
@@ -13,6 +14,7 @@ import com.vn.travel.entity.hotel.HotelBookingReceipt;
 import com.vn.travel.exception.ErrorCode;
 import com.vn.travel.exception.GeneralException;
 import com.vn.travel.exception.ResourceNotFoundException;
+import com.vn.travel.exception.RestApiException;
 import com.vn.travel.repository.*;
 import com.vn.travel.repository.activities.ActivitiesBookingReceiptRepository;
 import com.vn.travel.repository.activities.ActivitiesGameRepository;
@@ -35,7 +37,6 @@ import com.vn.travel.service.ReceiptService;
 import com.vn.travel.utils.AuthenticationUtils;
 import com.vn.travel.utils.HelperUtils;
 import com.vn.travel.utils.MappingUtils;
-import com.vn.travel.repository.*;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.data.domain.PageRequest;
@@ -44,10 +45,7 @@ import org.springframework.stereotype.Component;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 @Component
@@ -91,30 +89,33 @@ public class ReceiptServiceImpl implements ReceiptService {
 
             Hotel hotel = hotelRepository.findFirstByCode(bookingRequest.getHotelCode());
 
-            Account account  = accountDAO.getAccountById(hotel.getUserId());
+            Optional<Account> result = accountDAO.getAccountById(hotel.getUserId());
+            if (result.isPresent()) {
+                Account account = result.get();
+                List<String> hotelImages = hotelImageRepository.findAllHotelByCode(hotel.getCode());
+                HotelInfoDTO hotelInfoDTO = MappingUtils.map(hotel, HotelInfoDTO.class);
+                hotelInfoDTO.setImagesList(hotelImages);
 
-            List<String> hotelImages = hotelImageRepository.findAllHotelByCode(hotel.getCode());
-            HotelInfoDTO hotelInfoDTO = MappingUtils.map(hotel, HotelInfoDTO.class);
-            hotelInfoDTO.setImagesList(hotelImages);
-
-            HotelBookableItem hotelPackage = hotelBookItemRepository.findFirstById(Long.parseLong(bookingRequest.getPackageId()));
-            HotelBookingReceipt receipt = HotelBookingReceipt.builder()
-                    .hotelInfoDTO(hotelInfoDTO)
-                    .packageInfo(MappingUtils.map(hotelPackage, PackageDTO.class))
-                    .contact(contact)
-                    .userId(userId)
-                    .phonePartner(account.getPhone())
-                    .checkin(bookingRequest.getCheckinDate())
-                    .checkout(bookingRequest.getCheckoutDate())
-                    .bookingId(bookingId)
-                    .totalNights(calculateNumberNight(bookingRequest.getCheckinDate(), bookingRequest.getCheckoutDate()))
-                    .status(BookingStatus.BOOKING_PENDING)
-                    .partnerId(hotel.getUserId())
-                    .build();
-            receipt.setPrice(receipt.getTotalNights() * hotelPackage.getPrice());
-            receipt = hotelBookingReceiptRepository.save(receipt);
-            return BaseResponse.ok(MappingUtils.map(receipt, HotelBookingReceiptDTO.class));
-
+                HotelBookableItem hotelPackage = hotelBookItemRepository.findFirstById(Long.parseLong(bookingRequest.getPackageId()));
+                HotelBookingReceipt receipt = HotelBookingReceipt.builder()
+                        .hotelInfoDTO(hotelInfoDTO)
+                        .packageInfo(MappingUtils.map(hotelPackage, PackageDTO.class))
+                        .contact(contact)
+                        .userId(userId)
+                        .phonePartner(account.getPhone())
+                        .checkin(bookingRequest.getCheckinDate())
+                        .checkout(bookingRequest.getCheckoutDate())
+                        .bookingId(bookingId)
+                        .totalNights(calculateNumberNight(bookingRequest.getCheckinDate(), bookingRequest.getCheckoutDate()))
+                        .status(BookingStatus.BOOKING_PENDING)
+                        .partnerId(hotel.getUserId())
+                        .build();
+                receipt.setPrice(receipt.getTotalNights() * hotelPackage.getPrice());
+                receipt = hotelBookingReceiptRepository.save(receipt);
+                return BaseResponse.ok(MappingUtils.map(receipt, HotelBookingReceiptDTO.class));
+            } else {
+                throw new RestApiException(StatusCode.ACCOUNT_NOT_EXIST);
+            }
         } catch (Exception ex) {
             log.error("IOException:" + ex.getMessage(), ex);
             throw new GeneralException();
@@ -139,33 +140,35 @@ public class ReceiptServiceImpl implements ReceiptService {
                     .build();
 
 
-
             Activities activities = activitiesRepository.findFirstByCode(bookingRequest.getActivitiesCode());
 
-            Account account  = accountDAO.getAccountById(activities.getUserId());
+            Optional<Account> result = accountDAO.getAccountById(activities.getUserId());
+            if (result.isPresent()) {
+                Account account = result.get();
+                List<String> activitiesImageList = activitiesImageRepository.findAllActivitiesCode(activities.getCode());
+                List<ActivitiesGame> activitiesGameList = activitiesGameRepository.findAllByActivitiesCode(activities.getCode());
+                ActivitiesInfoDTO activitiesInfoDTO = MappingUtils.map(activities, ActivitiesInfoDTO.class);
+                activitiesInfoDTO.setImagesList(activitiesImageList);
+                activitiesInfoDTO.setGameDTOList(MappingUtils.map(activitiesGameList, ActivitiesGameDTO.class));
 
-            List<String> activitiesImageList = activitiesImageRepository.findAllActivitiesCode(activities.getCode());
-
-            List<ActivitiesGame> activitiesGameList = activitiesGameRepository.findAllByActivitiesCode(activities.getCode());
-            ActivitiesInfoDTO activitiesInfoDTO = MappingUtils.map(activities, ActivitiesInfoDTO.class);
-            activitiesInfoDTO.setImagesList(activitiesImageList);
-            activitiesInfoDTO.setGameDTOList(MappingUtils.map(activitiesGameList, ActivitiesGameDTO.class));
-
-            ActivitiesBookingReceipt receipt = ActivitiesBookingReceipt.builder()
-                    .activitiesInfoDTO(activitiesInfoDTO)
-                    .contact(contact)
-                    .userId(userId)
-                    .phonePartner(account.getPhone())
-                    .travelDate(bookingRequest.getTravelDate())
-                    .numberTicketChild(bookingRequest.getNumberTicketChild())
-                    .numberTicketAdult(bookingRequest.getNumberTicketAdult())
-                    .bookingId(bookingId)
-                    .status(BookingStatus.BOOKING_PENDING)
-                    .partnerId(activities.getUserId())
-                    .price(activities.getAdultTicketPrice() * bookingRequest.getNumberTicketAdult() + activities.getChildTicketPrice() * bookingRequest.getNumberTicketChild())
-                    .build();
-            receipt = activitiesBookingReceiptRepository.save(receipt);
-            return BaseResponse.ok(MappingUtils.map(receipt, ActivitiesBookingReceiptDTO.class));
+                ActivitiesBookingReceipt receipt = ActivitiesBookingReceipt.builder()
+                        .activitiesInfoDTO(activitiesInfoDTO)
+                        .contact(contact)
+                        .userId(userId)
+                        .phonePartner(account.getPhone())
+                        .travelDate(bookingRequest.getTravelDate())
+                        .numberTicketChild(bookingRequest.getNumberTicketChild())
+                        .numberTicketAdult(bookingRequest.getNumberTicketAdult())
+                        .bookingId(bookingId)
+                        .status(BookingStatus.BOOKING_PENDING)
+                        .partnerId(activities.getUserId())
+                        .price(activities.getAdultTicketPrice() * bookingRequest.getNumberTicketAdult() + activities.getChildTicketPrice() * bookingRequest.getNumberTicketChild())
+                        .build();
+                receipt = activitiesBookingReceiptRepository.save(receipt);
+                return BaseResponse.ok(MappingUtils.map(receipt, ActivitiesBookingReceiptDTO.class));
+            } else {
+                throw new RestApiException(StatusCode.ACCOUNT_NOT_EXIST);
+            }
 
         } catch (Exception ex) {
             log.error("IOException:" + ex.getMessage(), ex);
@@ -190,8 +193,6 @@ public class ReceiptServiceImpl implements ReceiptService {
         long diffInMilisecs = Math.abs(to.getTime() - from.getTime());
         return (int) TimeUnit.DAYS.convert(diffInMilisecs, TimeUnit.MILLISECONDS);
     }
-
-
 
 
     public BaseResponse getListHotelReceipt(BookingStatus status, Integer page, Integer perPage) {
@@ -224,7 +225,6 @@ public class ReceiptServiceImpl implements ReceiptService {
 
         return BaseResponse.ok(MappingUtils.map(receipt, ActivitiesBookingReceiptDTO.class));
     }
-
 
 
     public BaseResponse getListActivitiesReceipt(BookingStatus status, Integer page, Integer perPage) {
@@ -290,12 +290,12 @@ public class ReceiptServiceImpl implements ReceiptService {
         if (receipt == null) {
             throw new ResourceNotFoundException();
         }
-        if(request.getStatus().equals(BookingStatus.BOOKING_APPROVED)){
+        if (request.getStatus().equals(BookingStatus.BOOKING_APPROVED)) {
             receipt.setStatus(request.getStatus());
-            sendMailApprovedActivities(request , receipt);
-        }else{
+            sendMailApprovedActivities(request, receipt);
+        } else {
             receipt.setStatus(request.getStatus());
-            sendMailRejectActivities(request , receipt);
+            sendMailRejectActivities(request, receipt);
         }
 
         receipt.setStatus(request.getStatus());
@@ -314,8 +314,7 @@ public class ReceiptServiceImpl implements ReceiptService {
     }
 
 
-
-    private void sendMailApprovedActivities(ActivitiesApproveBookingRequest request  , ActivitiesBookingReceipt receipt) {
+    private void sendMailApprovedActivities(ActivitiesApproveBookingRequest request, ActivitiesBookingReceipt receipt) {
         try {
             StringBuilder content = new StringBuilder();
             content.append("Xin Chào Bạn ");
@@ -336,7 +335,7 @@ public class ReceiptServiceImpl implements ReceiptService {
     }
 
 
-    private void sendMailRejectActivities(ActivitiesApproveBookingRequest request  ,  ActivitiesBookingReceipt receipt) {
+    private void sendMailRejectActivities(ActivitiesApproveBookingRequest request, ActivitiesBookingReceipt receipt) {
         try {
             StringBuilder content = new StringBuilder();
             content.append("Xin Chào Bạn ");
@@ -370,12 +369,12 @@ public class ReceiptServiceImpl implements ReceiptService {
             throw new ResourceNotFoundException();
         }
 
-        if(request.getStatus().equals(BookingStatus.BOOKING_APPROVED)){
+        if (request.getStatus().equals(BookingStatus.BOOKING_APPROVED)) {
             receipt.setStatus(request.getStatus());
-            sendMailApprovedHotel(request , receipt);
-        }else{
+            sendMailApprovedHotel(request, receipt);
+        } else {
             receipt.setStatus(request.getStatus());
-            sendMailRejectHotel(request , receipt);
+            sendMailRejectHotel(request, receipt);
         }
 
 
@@ -384,8 +383,7 @@ public class ReceiptServiceImpl implements ReceiptService {
     }
 
 
-
-    private void sendMailApprovedHotel(HotelApproveBookingRequest restaurantApproveBookingRequest  , HotelBookingReceipt receipt) {
+    private void sendMailApprovedHotel(HotelApproveBookingRequest restaurantApproveBookingRequest, HotelBookingReceipt receipt) {
         try {
             StringBuilder content = new StringBuilder();
             content.append("Xin Chào Bạn ");
@@ -404,7 +402,7 @@ public class ReceiptServiceImpl implements ReceiptService {
         }
     }
 
-    private void sendMailRejectHotel(HotelApproveBookingRequest restaurantApproveBookingRequest  ,  HotelBookingReceipt receipt) {
+    private void sendMailRejectHotel(HotelApproveBookingRequest restaurantApproveBookingRequest, HotelBookingReceipt receipt) {
         try {
             StringBuilder content = new StringBuilder();
             content.append("Xin Chào Bạn ");
@@ -427,11 +425,6 @@ public class ReceiptServiceImpl implements ReceiptService {
         DateFormat dateFormat = new SimpleDateFormat("yyyy-mm-dd ");
         return dateFormat.format(date);
     }
-
-
-
-
-
 
 
 }

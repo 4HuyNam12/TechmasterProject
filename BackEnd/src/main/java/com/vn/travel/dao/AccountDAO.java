@@ -11,13 +11,14 @@ import org.springframework.stereotype.Repository;
 
 import javax.transaction.Transactional;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface AccountDAO extends JpaRepository<Account, Long> {
 
-    Account getAccountByEmail(String email);
+    Optional<Account> getAccountByEmail(String email);
 
-    Account getAccountById(String id);
+    Optional<Account> getAccountById(String id);
 
 
     @Transactional

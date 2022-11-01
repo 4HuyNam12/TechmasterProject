@@ -5,6 +5,7 @@ import {useForm} from "react-hook-form";
 import API from '../../../lib/API';
 import {typeActivity} from '../../../utils/amenities';
 import LoadingProgress from '../../LoadingProgress';
+import Popup from '../../popup/Popup';
 
 export default function ModalAdd({ show, handleClose, handleShow, search }) {
 
@@ -12,7 +13,19 @@ export default function ModalAdd({ show, handleClose, handleShow, search }) {
     const [fileList, setFileList] = useState();
     const [imageList, setImageList] = useState();
     const [message, setMessage] = useState();
-    const [loading, setLoading] = useState(false)
+    const [loading, setLoading] = useState(false);
+    const [isPopup, setIsPopup] = useState(false);
+	const [popupMessage, setPopupMessage] = useState("");
+
+const handleClosePopup = () => {
+        setIsPopup(false);
+        setPopupMessage("");
+    };
+
+    const handleOpenPopup = (message) => {
+        setIsPopup(true);  
+        setPopupMessage(message);
+    };
 
 
     const [type, setType] = useState("IN_DOOR")
@@ -47,7 +60,7 @@ export default function ModalAdd({ show, handleClose, handleShow, search }) {
 
             } else {
                 setLoading(false)
-                alert("Yêu cầu điền đầy đủ thông tin!")
+                handleOpenPopup("Yêu cầu điền đầy đủ thông tin!")
             }
         } catch (error) {
 
@@ -76,6 +89,7 @@ export default function ModalAdd({ show, handleClose, handleShow, search }) {
     }
     return (
         <>
+        <Popup isPopup={isPopup} popupMessage={popupMessage} handleClosePopup={() => handleClosePopup()}/>
             <Modal show={show}
                 onHide={() => {
                     handleClose()

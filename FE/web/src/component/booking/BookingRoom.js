@@ -4,10 +4,24 @@ import moment from 'moment';
 import API from '../../lib/API';
 import {useHistory} from 'react-router-dom';
 import {useForm} from "react-hook-form";
+import Popup from '../popup/Popup';
 
 
 export default function BookingRoom({ hotelCode, packageId }) {
     const { register, handleSubmit, watch, formState: { errors }, reset } = useForm();
+    const [isPopup, setIsPopup] = useState(false);
+	const [popupMessage, setPopupMessage] = useState("");
+
+const handleClosePopup = () => {
+        setIsPopup(false);
+        setPopupMessage("");
+        
+    };
+
+    const handleOpenPopup = (message) => {
+        setIsPopup(true);  
+        setPopupMessage(message);
+    };
 
     const [contact, setContact] = useState({});
     const [data, setData] = useState();
@@ -44,20 +58,20 @@ export default function BookingRoom({ hotelCode, packageId }) {
                         if (resp.ok) {
                             let response = await resp.json();
                             setData(response)
-                            alert("Bạn đã book thành công!")
                             history.push({
                                 pathname: '/booking-room-result',
                                 state: response
                             })
+                            // handleOpenPopup("Bạn đã book thành công!")
                         } else {
-                            alert("Vui lòng nhập đủ thông tin!")
+                            handleOpenPopup("Vui lòng nhập đủ thông tin!")
                         }
 
                     } else {
-                        alert("Ngày ở phải lớn hơn 1!")
+                        handleOpenPopup("Ngày ở phải lớn hơn 1!")
                     }
                 }else{
-                    alert("Tài khoản này không phải tài khoản khách hàng, vui lòng tạo tài khoản user để có thể booking!")
+                    handleOpenPopup("Tài khoản này không phải tài khoản khách hàng, vui lòng tạo tài khoản user để có thể booking!")
                 }
             } catch (error) {
 
@@ -74,6 +88,7 @@ export default function BookingRoom({ hotelCode, packageId }) {
     }
     return (
         <>
+        <Popup isPopup={isPopup} popupMessage={popupMessage} handleClosePopup={() => handleClosePopup()}/>
             <div className="wrapper__booking-room" >
                 {/* <div className="sign__up--text">
                     Hãy <span className="sign__up"

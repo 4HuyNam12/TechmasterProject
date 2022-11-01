@@ -2,9 +2,22 @@ import React, {useEffect, useState} from 'react';
 import {Button} from 'react-bootstrap';
 import Modal from 'react-bootstrap/Modal';
 import API, {BASE_URL_DOWNLOAD} from '../../../lib/API';
+import Popup from '../../popup/Popup';
 
 export default function ModalUpdate({ show, handleClose, data, search }) {
     const [post, setPost] = useState();
+    const [isPopup, setIsPopup] = useState(false);
+	const [popupMessage, setPopupMessage] = useState("");
+
+const handleClosePopup = () => {
+        setIsPopup(false);
+        setPopupMessage("");
+    };
+
+    const handleOpenPopup = (message) => {
+        setIsPopup(true);  
+        setPopupMessage(message);
+    };
     let handlePost = () => {
         setPost(data)
     }
@@ -26,7 +39,7 @@ export default function ModalUpdate({ show, handleClose, data, search }) {
                 search()
                 handleClose()
             } else {
-                alert("Vui lòng kiểm tra lại thông tin")
+                handleOpenPopup("Vui lòng kiểm tra lại thông tin")
             }
         } catch (error) {
 
@@ -34,6 +47,7 @@ export default function ModalUpdate({ show, handleClose, data, search }) {
     }
     return (
         <>
+        <Popup isPopup={isPopup} popupMessage={popupMessage} handleClosePopup={() => handleClosePopup()}/>
 
             <Modal show={show} onHide={() => {
                 handleClose()

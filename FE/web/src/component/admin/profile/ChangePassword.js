@@ -1,12 +1,24 @@
-import React, {useState} from 'react';
-import {Button} from 'react-bootstrap';
+import React, { useState } from 'react';
+import { Button } from 'react-bootstrap';
 import Modal from 'react-bootstrap/Modal';
-import {Controller, useForm} from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 import API from '../../../lib/API';
+import Popup from '../../popup/Popup';
 
 export default function ChangePassword({ show, handleClose }) {
     const { control, reset, handleSubmit, formState: { errors }, register } = useForm();
-    let [message, setMessage] = useState()
+    let [message, setMessage] = useState();
+    const [isPopup, setIsPopup] = useState(false);
+    const [popupMessage, setPopupMessage] = useState("");
+    const handleClosePopup = () => {
+        setIsPopup(false);
+        setPopupMessage("");
+    };
+
+    const handleOpenPopup = (message) => {
+        setIsPopup(true);
+        setPopupMessage(message);
+    };
     let submitHandler = async form => {
         if (form?.newPassword !== form?.newPss) {
             setMessage("Mật khẩu bạn nhập lại chưa đúng")
@@ -19,13 +31,15 @@ export default function ChangePassword({ show, handleClose }) {
             }
             let resp = await API.authorizedJSONPost(path, objReq);
             if (resp.ok) {
-                alert("Bạn đã thay đổi mật khẩu thành công")
+                handleOpenPopup("Bạn đã thay đổi mật khẩu thành công")
                 handleClose()
                 setMessage()
                 reset()
             } else {
                 let response = await resp.json();
-                setMessage(response?.message)
+                debugger;
+                alert(response);
+                setMessage(response?.message);
             }
 
         }
@@ -33,7 +47,7 @@ export default function ChangePassword({ show, handleClose }) {
     }
     return (
         <>
-
+            <Popup isPopup={isPopup} popupMessage={popupMessage} handleClosePopup={() => handleClosePopup()} />
             <Modal show={show} onHide={() => {
                 handleClose()
                 reset()

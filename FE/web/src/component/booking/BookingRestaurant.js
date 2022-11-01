@@ -1,13 +1,29 @@
 import moment from 'moment';
-import React, {useState} from 'react';
-import {useHistory, useLocation} from 'react-router-dom';
+import React, { useState } from 'react';
+import { useHistory, useLocation } from 'react-router-dom';
 import API from '../../lib/API';
 import '../../style/booking/booking-ticket.scss';
-import {useForm} from "react-hook-form";
+import { useForm } from "react-hook-form";
+import Popup from '../popup/Popup';
 
 export default function BookingRestaurant() {
     const { register, handleSubmit, watch, formState: { errors }, reset } = useForm();
     let location = useLocation();
+    const [isPopup, setIsPopup] = useState(false);
+    const [popupMessage, setPopupMessage] = useState("");
+
+    const handleClosePopup = () => {
+        setIsPopup(false);
+        setPopupMessage("");
+
+    };
+
+    const handleOpenPopup = (message) => {
+        setIsPopup(true);
+        setPopupMessage(message);
+
+
+    };
 
     let [date, setDate] = useState(new Date())
     let history = useHistory();
@@ -34,16 +50,17 @@ export default function BookingRestaurant() {
                     numberAdult: data?.numberTicketAdult
                 }, token)
                 if (resp.ok) {
-                    alert("Bạn đã đặt thành công!")
+                    //handleOpenPopup("Bạn đã đặt thành công!")
                     let response = await resp.json();
                     console.log(response)
                     history.push({
                         pathname: '/booking-restaurant-result',
                         state: response?.data?.id
                     })
+
                 }
-            }else{
-                alert("Tài khoản này không phải tài khoản khách hàng, vui lòng tạo tài khoản user để có thể booking!")
+            } else {
+                handleOpenPopup("Tài khoản này không phải tài khoản khách hàng, vui lòng tạo tài khoản user để có thể booking!")
             }
         } else {
             let message = window.confirm("Hãy đăng nhập ngay để trải nghiệm dịch vụ của chúng tôi");
@@ -56,6 +73,7 @@ export default function BookingRestaurant() {
     }
     return (
         <>
+            <Popup isPopup={isPopup} popupMessage={popupMessage} handleClosePopup={() => handleClosePopup()} />
             <div className="wrapper__booking-tiket">
                 {/* <div className="sign__up--text">
                     Hãy <span className="sign__up"

@@ -82,8 +82,6 @@ export default function Item({ data, index, search }) {
                         </svg>
                     </button>
                     <ModalUpdate handleClose={handleCloseUpdate} handleShow={handleShowUpdate} show={showUpdate} data={data} search={search}
-                       
-                        
                     />
 
                     <button

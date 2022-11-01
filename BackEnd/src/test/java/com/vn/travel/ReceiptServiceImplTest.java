@@ -48,10 +48,7 @@ import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 import org.springframework.data.domain.PageRequest;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @RunWith(PowerMockRunner.class)
 @PrepareForTest(AuthenticationUtils.class)
@@ -163,9 +160,9 @@ public class ReceiptServiceImplTest {
 
         Mockito.when(hotelRepository.findFirstByCode(Mockito.anyString())).thenReturn(hotel);
 
-        Mockito.when(accountDAO.getAccountById(Mockito.anyString())).thenReturn(account);
+        Mockito.when(accountDAO.getAccountById(Mockito.anyString())).thenReturn(java.util.Optional.ofNullable(account));
 
-        List<String> hotelImages = Arrays.asList("aaaaaaaaaaaaa.jpg");
+        List<String> hotelImages = Collections.singletonList("aaaaaaaaaaaaa.jpg");
 
         Mockito.when(hotelImageRepository.findAllHotelByCode(Mockito.anyString())).thenReturn(hotelImages);
         HotelInfoDTO hotelInfoDTO = MappingUtils.map(hotel, HotelInfoDTO.class);
@@ -222,7 +219,7 @@ public class ReceiptServiceImplTest {
 
         Mockito.when(activitiesRepository.findFirstByCode(Mockito.anyString())).thenReturn(activities);
 
-        Mockito.when(accountDAO.getAccountById(Mockito.anyString())).thenReturn(account);
+        Mockito.when(accountDAO.getAccountById(Mockito.anyString())).thenReturn(Optional.ofNullable(account));
 
 
             List<String> activitiesImageList = activitiesImageRepository.findAllActivitiesCode(activities.getCode());
@@ -312,7 +309,7 @@ public class ReceiptServiceImplTest {
 
         Mockito.when(hotelRepository.findFirstByCode(Mockito.anyString())).thenReturn(hotel);
 
-        Mockito.when(accountDAO.getAccountById(Mockito.anyString())).thenReturn(account);
+        Mockito.when(accountDAO.getAccountById(Mockito.anyString())).thenReturn(Optional.ofNullable(account));
 
         List<String> hotelImages = Arrays.asList("aaaaaaaaaaaaa.jpg");
 

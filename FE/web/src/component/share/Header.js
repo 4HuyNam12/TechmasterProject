@@ -4,10 +4,10 @@ import logo from '../../image/dulichvietnam.jpg';
 import '../../style/style.scss';
 import Profile from './Profile';
 
-export default function Header({ isLogin, tokenParams }) {
+export default function Header({isLogin, tokenParams}) {
     let history = useHistory();
     const token = localStorage.getItem("token");
-    const pageHeader = localStorage.getItem("pageHeader")
+    const pageHeader = localStorage.getItem("pageHeader");
     let stylePage = (value) => {
         if (pageHeader == value) {
             return `#2D749A`
@@ -16,7 +16,7 @@ export default function Header({ isLogin, tokenParams }) {
         }
     }
     return (
-        <div style={{ width: '100%', height: 100 }}>
+        <div style={{width: '100%', height: 100}}>
             <header>
                 <div className="wrapper__header">
                     <div className="container__header container">
@@ -25,43 +25,48 @@ export default function Header({ isLogin, tokenParams }) {
                                 <div className="wrapper__logo" onClick={() => {
                                     history.push('/')
                                     localStorage.removeItem("pageHeader")
-                                }} style={{ cursor: 'pointer' }}>
-                                    <img alt="" src={logo} />
+                                }} style={{cursor: 'pointer'}}>
+                                    <img alt="" src={logo}/>
                                 </div>
                             </div>
                             <div className="col-7 col-menu col-nav">
                                 <ul>
                                     <li
-                                        style={{ backgroundColor: stylePage("hotel") }}
+                                        style={{backgroundColor: stylePage("hotel")}}
                                         className="hotel" onClick={() => {
-                                            history.push('/search-hotel')
-                                            localStorage.setItem("pageHeader", "hotel")
-                                        }}>Khách Sạn</li>
+                                        history.push('/search-hotel')
+                                        localStorage.setItem("pageHeader", "hotel")
+                                    }}>Khách Sạn
+                                    </li>
                                     <li
-                                        style={{ backgroundColor: stylePage("restaurant") }}
+                                        style={{backgroundColor: stylePage("restaurant")}}
                                         className="restaurant" onClick={() => {
-                                            history.push('/search-restaurant')
-                                            localStorage.setItem("pageHeader", "restaurant")
-                                        }}>Nhà Hàng</li>
+                                        history.push('/search-restaurant')
+                                        localStorage.setItem("pageHeader", "restaurant")
+                                    }}>Nhà Hàng
+                                    </li>
                                     <li
-                                        style={{ backgroundColor: stylePage("entainment") }}
+                                        style={{backgroundColor: stylePage("entainment")}}
                                         className="entertainment" onClick={() => {
-                                            history.push('/search-entertainment')
-                                            localStorage.setItem("pageHeader", "entertainment")
-                                        }}>Khu Vui Chơi</li>
+                                        history.push('/search-entertainment')
+                                        localStorage.setItem("pageHeader", "entertainment")
+                                    }}>Khu Vui Chơi
+                                    </li>
                                     <li className="post"
                                         onClick={() => {
                                             history.push('/post')
                                             localStorage.setItem("pageHeader", "post")
                                         }}
-                                    >Bài Viết</li>
+                                    >Bài Viết
+                                    </li>
                                     <li className="favourite"
-                                        style={{ backgroundColor: stylePage("favourite") }}
+                                        style={{backgroundColor: stylePage("favourite")}}
                                         onClick={() => {
                                             history.push('/favourite')
                                             localStorage.setItem("pageHeader", "favourite")
                                         }}
-                                    >Yêu Thích</li>
+                                    >Yêu Thích
+                                    </li>
                                 </ul>
                             </div>
                             {!token ? <div className="col-3 col-account col-nav">
@@ -69,7 +74,7 @@ export default function Header({ isLogin, tokenParams }) {
                                     <span>Đăng Nhập</span>
                                 </div>
                                 {/* `${BASE_URL_DOWNLOAD}${user?.image}` */}
-                            </div> : <Profile isLogin={isLogin} tokenParams={tokenParams} />}
+                            </div> : <Profile isLogin={isLogin} tokenParams={tokenParams}/>}
                         </div>
                     </div>
                 </div>

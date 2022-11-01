@@ -20,7 +20,7 @@ import org.springframework.stereotype.Service;
 import javax.transaction.Transactional;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
+import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -32,7 +32,7 @@ public class PostServiceImpl implements PostService {
     private PostDAO postDAO;
 
     // trả về list danh sách bài viết
-    @Override
+//    @Override
     public ApiResponse searchByTitle(String title, Integer page, Integer size) {
         Pageable pageable = PageRequest.of(page, size);
         List<PostResponse> postResponses;
@@ -54,7 +54,7 @@ public class PostServiceImpl implements PostService {
                 .build();
     }
 
-    @Override
+    //    @Override
     public ApiResponse searchAll() {
         List<Post> postList = postDAO.findAll();
         List<PostResponse> postResponses = MappingUtils.map(postList, PostResponse.class);
@@ -64,7 +64,7 @@ public class PostServiceImpl implements PostService {
     }
 
     //  thêm bài viết
-    @Override
+//    @Override
     public void add(PostRequest postRequest) {
         Post post = new Post();
         post.setContent(postRequest.getContent());
@@ -75,28 +75,30 @@ public class PostServiceImpl implements PostService {
 
     //  update bài viết
     @Override
-    public void update(String PostId, PostRequest postRequest) {
+    public void update(String postId, PostRequest postRequest) {
 
-        Post post = postDAO.getPostById(PostId);
-        if (Objects.isNull(post)) {
-            throw new RestApiException(StatusCode.POST_NOT_EXIST);
-        }
-
-        String image1 = FileStore.getFilePath(postRequest.getMultipartFile(), "-user");
-        if (image1 != null) {
-            postRequest.setImage(image1);
-        }
-
-        if (postRequest.getTitle() != null) post.setTitle(postRequest.getTitle());
-        if (postRequest.getContent() != null) post.setContent(postRequest.getContent());
-        if (image1 != null) {
-            if (post.getImage() != null) {
-                String image = post.getImage();
-                FileStore.deleteFile(image);
+        Optional<Post> postOptional = postDAO.getPostById(postId);
+        if (postOptional.isPresent()) {
+            Post post = postOptional.get();
+            String image1 = FileStore.getFilePath(postRequest.getMultipartFile(), "-user");
+            if (image1 != null) {
+                postRequest.setImage(image1);
             }
-            post.setImage(postRequest.getImage());
+
+            if (postRequest.getTitle() != null) post.setTitle(postRequest.getTitle());
+            if (postRequest.getContent() != null) post.setContent(postRequest.getContent());
+            if (image1 != null) {
+                if (post.getImage() != null) {
+                    String image = post.getImage();
+                    FileStore.deleteFile(image);
+                }
+                post.setImage(postRequest.getImage());
+            }
+            postDAO.save(post);
+            return;
         }
-        postDAO.save(post);
+
+        throw new RestApiException(StatusCode.POST_NOT_EXIST);
     }
 
     //xóa bài viết
@@ -111,14 +113,12 @@ public class PostServiceImpl implements PostService {
     // trả về 1 bài viết theo id
     @Override
     public PostResponse getById(String postId) {
-
-        if (StringUtils.isEmpty(postId)) {
-            throw new RestApiException(StatusCode.DATA_EMPTY);
+        Optional<Post> postOptional = postDAO.getPostById(postId);
+        if (postOptional.isPresent()) {
+            Post post = postOptional.get();
+            return MappingUtils.map(post, PostResponse.class);
         }
-        Post post = postDAO.getPostById(postId);
-        if (Objects.isNull(post)) {
-            throw new RestApiException(StatusCode.POST_NOT_EXIST);
-        }
-        return MappingUtils.map(post, PostResponse.class);
+        throw new RestApiException(StatusCode.DATA_EMPTY);
     }
+
 }

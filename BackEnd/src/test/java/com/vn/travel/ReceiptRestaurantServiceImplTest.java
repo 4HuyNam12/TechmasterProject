@@ -96,7 +96,7 @@ public class ReceiptRestaurantServiceImplTest {
 
         Mockito.when(restaurantRepository.findFirstByCode(Mockito.anyString())).thenReturn(restaurant);
 
-        Mockito.when(accountDAO.getAccountById(Mockito.anyString())).thenReturn(account);
+        Mockito.when(accountDAO.getAccountById(Mockito.anyString())).thenReturn(java.util.Optional.ofNullable(account));
 
         Mockito.when(restaurantImageRepository.findAllByRestaurantCode(Mockito.anyString())).thenReturn(restaurantImages);
 

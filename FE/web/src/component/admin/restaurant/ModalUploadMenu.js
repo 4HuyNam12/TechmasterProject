@@ -1,9 +1,10 @@
-import React, {useState} from 'react';
+import React, { useState } from 'react';
 import Modal from 'react-bootstrap/Modal';
-import {Button} from 'react-bootstrap';
-import {useForm} from "react-hook-form";
+import { Button } from 'react-bootstrap';
+import { useForm } from "react-hook-form";
 import API from '../../../lib/API';
 import LoadingProgress from '../../LoadingProgress';
+import Popup from '../../popup/Popup';
 
 export default function ModalUploadMenu({ show, handleClose, search, restaurantCode }) {
 
@@ -13,7 +14,18 @@ export default function ModalUploadMenu({ show, handleClose, search, restaurantC
     const [loading, setLoading] = useState(false)
     const [message, setMessage] = useState();
 
+    const [isPopup, setIsPopup] = useState(false);
+    const [popupMessage, setPopupMessage] = useState("");
 
+    const handleClosePopup = () => {
+        setIsPopup(false);
+        setPopupMessage("");
+    };
+
+    const handleOpenPopup = (message) => {
+        setIsPopup(true);
+        setPopupMessage(message);
+    };
 
 
     let onSubmit = async (form) => {
@@ -32,7 +44,7 @@ export default function ModalUploadMenu({ show, handleClose, search, restaurantC
             handleClose()
             search()
             reset();
-            alert("Thêm thực đơn thành công!")
+            handleOpenPopup("Thêm thực đơn thành công!")
             window.location.reload()
         } else {
             setMessage("Vui lòng kiểm tra lại thông tin")
@@ -43,6 +55,7 @@ export default function ModalUploadMenu({ show, handleClose, search, restaurantC
 
     return (
         <>
+        <Popup isPopup={isPopup} popupMessage={popupMessage} handleClosePopup={() => handleClosePopup()} />
             <Modal show={show}
                 onHide={() => {
                     handleClose()
@@ -85,7 +98,7 @@ export default function ModalUploadMenu({ show, handleClose, search, restaurantC
                                             <div className="menu__item--input">
                                                 <input type="text"
                                                     {...register("price")}
-                                                  
+
                                                 />
                                             </div>
 

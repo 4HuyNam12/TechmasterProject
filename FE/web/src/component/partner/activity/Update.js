@@ -1,16 +1,30 @@
-import React, {useEffect, useState} from 'react';
+import React, { useEffect, useState } from 'react';
 import Modal from 'react-bootstrap/Modal';
-import {Button} from 'react-bootstrap';
-import {Controller, useForm} from "react-hook-form";
-import API, {BASE_URL_DOWNLOAD} from '../../../lib/API';
+import { Button } from 'react-bootstrap';
+import { Controller, useForm } from "react-hook-form";
+import API, { BASE_URL_DOWNLOAD } from '../../../lib/API';
 import LoadingProgress from '../../LoadingProgress';
+import Popup from '../../popup/Popup';
 
 export default function Update({ show, handleClose, search, data, image, gameId, activitiesCode }) {
     const { control, reset, handleSubmit, formState: { errors }, register } = useForm();
     const [filePath, setFilePath] = useState();
     const [file, setFile] = useState();
     const [message, setMessage] = useState();
-    const [loading, setLoading] = useState(false)
+    const [loading, setLoading] = useState(false);
+    const [isPopup, setIsPopup] = useState(false);
+    const [popupMessage, setPopupMessage] = useState("");
+
+
+    const handleClosePopup = () => {
+        setIsPopup(false);
+        setPopupMessage("");
+    };
+
+    const handleOpenPopup = (message) => {
+        setIsPopup(true);
+        setPopupMessage(message);
+    };
     let [arrAmenities, setArrAmenities] = useState([])
     useEffect(() => {
         handleAmenities()
@@ -24,7 +38,7 @@ export default function Update({ show, handleClose, search, data, image, gameId,
     }
 
     let onSubmit = async (form) => {
-       
+
         try {
             setLoading(true)
             let path = '/partner/activities/game/update';
@@ -44,7 +58,7 @@ export default function Update({ show, handleClose, search, data, image, gameId,
                 console.log("ok")
             } else {
                 setLoading(false)
-                alert("Yêu cầu điền đầy đủ thông tin!")
+                handleOpenPopup("Yêu cầu điền đầy đủ thông tin!")
             }
 
 
@@ -68,6 +82,7 @@ export default function Update({ show, handleClose, search, data, image, gameId,
 
     return (
         <>
+            <Popup isPopup={isPopup} popupMessage={popupMessage} handleClosePopup={() => handleClosePopup()} />
             <Modal show={show}
                 onHide={() => {
                     handleClose()
@@ -125,9 +140,9 @@ export default function Update({ show, handleClose, search, data, image, gameId,
                                             </div>
                                         </li>
 
-                                        
 
-                                        
+
+
 
 
                                         <li className="menu__item">

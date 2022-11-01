@@ -1,8 +1,10 @@
 package com.vn.travel.security;
 
+import com.vn.travel.constant.StatusCode;
 import com.vn.travel.dao.AccountDAO;
 import com.vn.travel.entity.account.Account;
 import com.vn.travel.exception.JwtCustomException;
+import com.vn.travel.exception.RestApiException;
 import com.vn.travel.response.token.TokenResponse;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtException;
@@ -16,12 +18,14 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 import java.util.Base64;
 import java.util.Date;
+import java.util.Optional;
 
 @Service
 public class JwtTokenProvider {
@@ -45,25 +49,27 @@ public class JwtTokenProvider {
     }
 
     public TokenResponse createToken(String username) {
-        Claims claims = Jwts.claims().setSubject(username);
-
-        Account account = accountDAO.getAccountByEmail(username);
-
-        Date now = new Date();
-        Date validity = new Date(now.getTime() + validityInMilliseconds);
-        String accessToken = Jwts.builder()
-                .setClaims(claims)
-                .setIssuedAt(now)
-                .setExpiration(validity)
-                .signWith(SignatureAlgorithm.HS256, secretKey)
-                .compact();
-        TokenResponse authenDTO = new TokenResponse();
-        authenDTO.setExpirationTime(validityInMilliseconds);
-        authenDTO.setAccessToken(accessToken);
-        authenDTO.setAccountId(account.getId());
-        authenDTO.setRoleId(account.getRole().getId());
-        authenDTO.setRoleName(account.getRole().getName());
-        return authenDTO;
+        Optional<Account> result = accountDAO.getAccountByEmail(username);
+        if (result.isPresent()) {
+            Account account = result.get();
+            Claims claims = Jwts.claims().setSubject(username);
+            Date now = new Date();
+            Date validity = new Date(now.getTime() + validityInMilliseconds);
+            String accessToken = Jwts.builder()
+                    .setClaims(claims)
+                    .setIssuedAt(now)
+                    .setExpiration(validity)
+                    .signWith(SignatureAlgorithm.HS256, secretKey)
+                    .compact();
+            TokenResponse authenDTO = new TokenResponse();
+            authenDTO.setExpirationTime(validityInMilliseconds);
+            authenDTO.setAccessToken(accessToken);
+            authenDTO.setAccountId(account.getId());
+            authenDTO.setRoleId(account.getRole().getId());
+            authenDTO.setRoleName(account.getRole().getName());
+            return authenDTO;
+        }
+        throw new RestApiException(StatusCode.ACCOUNT_NOT_EXIST);
     }
 
     public Authentication getAuthentication(String token) {
