@@ -67,7 +67,7 @@ public class RestaurantServiceImplTest {
 
     Account account = new Account("1", "nam", "travalar@gmail.com"
             , "0983302976", true, "123456", "abc.jpg",
-            "05-06-99", true, new Role(1L, "ROLE_ADMIN"), "a");
+            "05-06-99", true, 1L, "a");
 
     Contact contact = new Contact("travalar", "nguyen",
             "travalar@123", "0983302922");

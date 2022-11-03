@@ -22,7 +22,7 @@ export default function HomeSearch() {
     
     let search = async (value) => {
         let path = `/search/customer/search-filter?title=${value}`;
-        console.log(path)
+        console.log(path);
         let resp = await API.anonymousJSONGETHOTEL(path);
         if (resp.ok) {
             let response = await resp.json();

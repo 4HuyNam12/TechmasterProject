@@ -3,11 +3,12 @@ package com.vn.travel.service.impl;
 import com.vn.travel.constant.Constants;
 import com.vn.travel.constant.RoleEnum;
 import com.vn.travel.constant.StatusCode;
-import com.vn.travel.dao.AccountDAO;
 import com.vn.travel.entity.account.Account;
 import com.vn.travel.entity.account.Role;
 import com.vn.travel.exception.RestApiException;
 import com.vn.travel.model.UserPrincipal;
+import com.vn.travel.repository.AccountRepository;
+import com.vn.travel.repository.RoleRepository;
 import com.vn.travel.request.account.AccountRequest;
 import com.vn.travel.request.account.ChangePasswordRequest;
 import com.vn.travel.response.ApiResponse;
@@ -39,9 +40,11 @@ import java.util.*;
 @AllArgsConstructor
 public class AccountServiceImpl implements AccountService, UserDetailsService {
 
-    private AccountDAO accountDAO;
+    private AccountRepository accountRepository;
 
     private EmailService emailService;
+
+    private RoleRepository roleRepository;
 
     @Override
     public void add(AccountRequest request) {
@@ -50,7 +53,7 @@ public class AccountServiceImpl implements AccountService, UserDetailsService {
             throw new RestApiException(StatusCode.DATA_EMPTY);
         }
 
-        Optional<Account> response = accountDAO.getAccountByEmail(request.getEmail());
+        Optional<Account> response = accountRepository.getAccountByEmail(request.getEmail());
         if (!response.isPresent()) {
             if (!ValidateUtil.isEmail(request.getEmail())) {
                 throw new RestApiException(StatusCode.EMAIL_NOT_RIGHT_FORMAT);
@@ -66,10 +69,10 @@ public class AccountServiceImpl implements AccountService, UserDetailsService {
             account.setImage(FileStore.getDefaultAvatar());
             account.setPassword(PasswordGenerator.getHashString("123@123aB"));
             account.setPhone(request.getPhone());
-            account.setRole(new Role(request.getRoleId()));
+            account.setRole(request.getRoleId());
             account.setName(request.getName());
             account.setGender(request.getGender());
-            accountDAO.save(account);
+            accountRepository.save(account);
 
             //send mail
             sendMail(request.getEmail());
@@ -85,7 +88,7 @@ public class AccountServiceImpl implements AccountService, UserDetailsService {
                 StringUtils.isEmpty(request.getDob()) || StringUtils.isEmpty(request.getPhone())) {
             throw new RestApiException(StatusCode.DATA_EMPTY);
         }
-        Optional<Account> response = accountDAO.getAccountByEmail(request.getEmail());
+        Optional<Account> response = accountRepository.getAccountByEmail(request.getEmail());
         if (!response.isPresent()) {
             if (!ValidateUtil.isEmail(request.getEmail())) {
                 throw new RestApiException(StatusCode.EMAIL_NOT_RIGHT_FORMAT);
@@ -101,10 +104,10 @@ public class AccountServiceImpl implements AccountService, UserDetailsService {
             account.setImage(FileStore.getDefaultAvatar());
             account.setPassword(PasswordGenerator.getHashString(request.getPassword()));
             account.setPhone(request.getPhone());
-            account.setRole(new Role(5L));
+            account.setRole(5L);
             account.setName(request.getName());
             account.setGender(request.getGender());
-            accountDAO.save(account);
+            accountRepository.save(account);
         } else {
             throw new RestApiException(StatusCode.ACCOUNT_REGISTER);
         }
@@ -138,18 +141,19 @@ public class AccountServiceImpl implements AccountService, UserDetailsService {
         if (!ValidateUtil.isPhoneNumber(request.getPhone())) {
             throw new RestApiException(StatusCode.PHONE_NUMBER_NOT_RIGHT_FORMAT);
         }
-        Optional<Account> result = accountDAO.getAccountById(id);
+        Optional<Account> result = accountRepository.getAccountById(id);
         if (result.isPresent()) {
             Account account = result.get();
+            String roleName = roleRepository.getNameById(request.getRoleId());
             account.setEmail(request.getEmail());
             account.setDob(request.getDob());
             account.setPhone(request.getPhone());
             if (account.getRole() != null) {
-                account.setRole(new Role(request.getRoleId()));
+                account.setRole(request.getRoleId());
             }
             account.setName(request.getName());
             account.setGender(request.getGender());
-            accountDAO.save(account);
+            accountRepository.save(account);
         } else {
             throw new RestApiException(StatusCode.ACCOUNT_NOT_EXIST);
         }
@@ -162,7 +166,7 @@ public class AccountServiceImpl implements AccountService, UserDetailsService {
         UserPrincipal currentUser = (UserPrincipal) SecurityContextHolder.getContext().getAuthentication()
                 .getPrincipal();
 
-        Optional<Account> result = accountDAO.getAccountById(currentUser.getId());
+        Optional<Account> result = accountRepository.getAccountById(currentUser.getId());
 
         if (result.isPresent()) {
             Account account = result.get();
@@ -172,11 +176,11 @@ public class AccountServiceImpl implements AccountService, UserDetailsService {
                         throw new RestApiException(1, "Mật Khẩu Mới Trùng Mật Khẩu Cũ");
                     }
                     account.setPassword(PasswordGenerator.getHashString(changePasswordRequest.getNewPassword()));
-                    accountDAO.save(account);
+                    accountRepository.save(account);
                 } else {
                     throw new RestApiException(1, "wrong password");
                 }
-                accountDAO.save(account);
+                accountRepository.save(account);
             } else {
                 throw new RestApiException(1, "Mật Khẩu Không Đúng Định Dạng");
             }
@@ -199,7 +203,7 @@ public class AccountServiceImpl implements AccountService, UserDetailsService {
         if (!ValidateUtil.isPhoneNumber(request.getPhone())) {
             throw new RestApiException(StatusCode.PHONE_NUMBER_NOT_RIGHT_FORMAT);
         }
-        Optional<Account> result = accountDAO.getAccountById(id);
+        Optional<Account> result = accountRepository.getAccountById(id);
         if (result.isPresent()) {
             Account account = result.get();
             String image1 = FileStore.getFilePath(request.getMultipartFile(), "-user");
@@ -220,7 +224,7 @@ public class AccountServiceImpl implements AccountService, UserDetailsService {
                 account.setImage(request.getImage());
             }
             account.setDob(request.getDob());
-            accountDAO.save(account);
+            accountRepository.save(account);
         } else {
             throw new RestApiException(StatusCode.ACCOUNT_NOT_EXIST);
         }
@@ -233,7 +237,7 @@ public class AccountServiceImpl implements AccountService, UserDetailsService {
         if (StringUtils.isEmpty(id)) {
             throw new RestApiException(StatusCode.DATA_EMPTY);
         }
-        accountDAO.deleteAllById(id);
+        accountRepository.deleteAllById(id);
     }
 
 
@@ -250,8 +254,8 @@ public class AccountServiceImpl implements AccountService, UserDetailsService {
         }
 
 
-        Long totalPage = accountDAO.countAccountByNameAndEmailAndRole(name, email, roles);
-        Page<Account> accounts = accountDAO.searchAccountByNameEmailRole(name, email, roles, pageable);
+        Long totalPage = accountRepository.countAccountByNameAndEmailAndRole(name, email, roles);
+        Page<Account> accounts = accountRepository.searchAccountByNameEmailRole(name, email, roles, pageable);
 
         List<AccountResponse> accountResponses = new ArrayList<>();
         accounts.forEach(account -> accountResponses.add(convert(account)));
@@ -265,7 +269,7 @@ public class AccountServiceImpl implements AccountService, UserDetailsService {
         if (StringUtils.isEmpty(id)) {
             throw new RestApiException(StatusCode.DATA_EMPTY);
         }
-        Optional<Account> result = accountDAO.getAccountById(id);
+        Optional<Account> result = accountRepository.getAccountById(id);
         if (result.isPresent()) {
             Account account = result.get();
             return convert(account);
@@ -278,7 +282,7 @@ public class AccountServiceImpl implements AccountService, UserDetailsService {
         if (StringUtils.isEmpty(email)) {
             throw new RestApiException(StatusCode.DATA_EMPTY);
         }
-        Optional<Account> result = accountDAO.getAccountByEmail(email);
+        Optional<Account> result = accountRepository.getAccountByEmail(email);
         if (result.isPresent()) {
             Account account = result.get();
             return convert(account);
@@ -292,11 +296,11 @@ public class AccountServiceImpl implements AccountService, UserDetailsService {
         if (StringUtils.isEmpty(id)) {
             throw new RestApiException(StatusCode.DATA_EMPTY);
         }
-        Optional<Account> result = accountDAO.getAccountById(id);
+        Optional<Account> result = accountRepository.getAccountById(id);
         if (result.isPresent()) {
             Account account = result.get();
             account.setEnabled(!account.getEnabled());
-            accountDAO.save(account);
+            accountRepository.save(account);
         } else {
             throw new RestApiException(StatusCode.ACCOUNT_NOT_EXIST);
         }
@@ -306,12 +310,14 @@ public class AccountServiceImpl implements AccountService, UserDetailsService {
 
     public AccountResponse convert(Account account) {
         AccountResponse accountResponse = AccountResponse.builder().build();
+        String roleName = roleRepository.getNameById(account.getRole());
+
         accountResponse.setId(account.getId());
         accountResponse.setDob(account.getDob());
         accountResponse.setEmail(account.getEmail());
         accountResponse.setImage(account.getImage());
-        accountResponse.setRoleId(account.getRole().getId());
-        accountResponse.setRoleName(account.getRole().getName());
+        accountResponse.setRoleId(account.getRole());
+        accountResponse.setRoleName(roleName);
         accountResponse.setName(account.getName());
 
         String gender;
@@ -330,16 +336,17 @@ public class AccountServiceImpl implements AccountService, UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        Optional<Account> response = accountDAO.getAccountByEmail(email);
+        Optional<Account> response = accountRepository.getAccountByEmail(email);
         if (response.isPresent()) {
             Account account = response.get();
+            String roleName = roleRepository.getNameById(account.getRole());
             List<SimpleGrantedAuthority> authorities = new ArrayList<SimpleGrantedAuthority>();
-            authorities.add(new SimpleGrantedAuthority(account.getRole().getName()));
+            authorities.add(new SimpleGrantedAuthority(roleName));
             UserPrincipal accountDTO = new UserPrincipal(account.getEmail(), account.getPassword(), account.getEnabled(), true, true,
                     true, authorities);
             accountDTO.setId(account.getId());
             accountDTO.setName(account.getName());
-            accountDTO.setRoleId(account.getRole().getId());
+            accountDTO.setRoleId(account.getRole());
             return accountDTO;
         }
         throw new UsernameNotFoundException("not found");

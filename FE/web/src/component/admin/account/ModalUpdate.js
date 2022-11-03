@@ -7,7 +7,6 @@ import API from '../../../lib/API';
 
 export default function ModalUpdate({ show, handleClose, id, search, account }) {
     const { control, reset, handleSubmit, formState: { errors }, register } = useForm();
-    console.log(account?.dob, account?.gender)
     const [message, setMessage] = useState()
     const [gender, setGender] = useState(true);
     const [dob, setDob] = useState()

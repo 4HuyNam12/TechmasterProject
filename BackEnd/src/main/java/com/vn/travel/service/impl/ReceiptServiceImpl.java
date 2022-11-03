@@ -2,7 +2,6 @@ package com.vn.travel.service.impl;
 
 import com.vn.travel.common.type.BookingStatus;
 import com.vn.travel.constant.StatusCode;
-import com.vn.travel.dao.AccountDAO;
 import com.vn.travel.entity.BookingContact;
 import com.vn.travel.entity.account.Account;
 import com.vn.travel.entity.activities.Activities;
@@ -67,7 +66,7 @@ public class ReceiptServiceImpl implements ReceiptService {
 
     private AccountService accountService;
 
-    private AccountDAO accountDAO;
+    private AccountRepository accountRepository;
 
 
     @Override
@@ -89,7 +88,7 @@ public class ReceiptServiceImpl implements ReceiptService {
 
             Hotel hotel = hotelRepository.findFirstByCode(bookingRequest.getHotelCode());
 
-            Optional<Account> result = accountDAO.getAccountById(hotel.getUserId());
+            Optional<Account> result = accountRepository.getAccountById(hotel.getUserId());
             if (result.isPresent()) {
                 Account account = result.get();
                 List<String> hotelImages = hotelImageRepository.findAllHotelByCode(hotel.getCode());
@@ -142,7 +141,7 @@ public class ReceiptServiceImpl implements ReceiptService {
 
             Activities activities = activitiesRepository.findFirstByCode(bookingRequest.getActivitiesCode());
 
-            Optional<Account> result = accountDAO.getAccountById(activities.getUserId());
+            Optional<Account> result = accountRepository.getAccountById(activities.getUserId());
             if (result.isPresent()) {
                 Account account = result.get();
                 List<String> activitiesImageList = activitiesImageRepository.findAllActivitiesCode(activities.getCode());

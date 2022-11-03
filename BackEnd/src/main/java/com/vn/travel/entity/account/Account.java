@@ -47,9 +47,10 @@ public class Account extends BaseTimestamp implements Serializable {
     @Column(name = "enabled")
     private Boolean enabled;
 
-    @ManyToOne
-    @JoinColumn(name = "role_id")
-    private Role role;
+//    @ManyToOne
+//    @JoinColumn(name = "role_id")
+    @Column(name = "role_id")
+    private Long role;
 
     @Column(name = "reset_password_token")
     private String resetPasswordToken;

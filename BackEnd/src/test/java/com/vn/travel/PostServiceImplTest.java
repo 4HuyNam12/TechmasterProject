@@ -1,7 +1,7 @@
 package com.vn.travel;
 
-import com.vn.travel.dao.PostDAO;
 import com.vn.travel.entity.post.Post;
+import com.vn.travel.repository.PostRepository;
 import com.vn.travel.request.PostRequest;
 import com.vn.travel.response.ApiResponse;
 import com.vn.travel.response.post.PostResponse;
@@ -22,7 +22,7 @@ public class PostServiceImplTest {
 
 
     @Mock
-    PostDAO postDAO;
+    PostRepository postRepository;
 
     @InjectMocks
     PostServiceImpl postServiceImpl;
@@ -45,7 +45,7 @@ public class PostServiceImplTest {
 
     @Test
     public void testSearchAll() {
-        Mockito.when(postDAO.findAll()).thenReturn(postList);
+        Mockito.when(postRepository.findAll()).thenReturn(postList);
 
         List<PostResponse> postResponses = new ArrayList<>();
         postList.forEach(post -> postResponses.add(convertPostResponse(post)));
@@ -57,26 +57,26 @@ public class PostServiceImplTest {
 
     @Test
     public void testAdd() {
-        Mockito.when(postDAO.save(post)).thenReturn(post);
+        Mockito.when(postRepository.save(post)).thenReturn(post);
         postServiceImpl.add(postRequest);
     }
 
     @Test
     public void testUpdate() {
-        Mockito.when(postDAO.getPostById(Mockito.anyString())).thenReturn(java.util.Optional.ofNullable(post));
-        Mockito.when(postDAO.save(post)).thenReturn(post);
+        Mockito.when(postRepository.getPostById(Mockito.anyString())).thenReturn(java.util.Optional.ofNullable(post));
+        Mockito.when(postRepository.save(post)).thenReturn(post);
         postServiceImpl.update( "1", postRequest);
     }
 
     @Test
     public void testGetById() {
-        Mockito.when(postDAO.getPostById(Mockito.anyString())).thenReturn(java.util.Optional.ofNullable(post));
+        Mockito.when(postRepository.getPostById(Mockito.anyString())).thenReturn(java.util.Optional.ofNullable(post));
         postServiceImpl.getById("1");
     }
 
     @Test
     public void testdelete() {
-        Mockito.doNothing().when(postDAO).delete(post);
+        Mockito.doNothing().when(postRepository).delete(post);
         postServiceImpl.delete("1");
 
 

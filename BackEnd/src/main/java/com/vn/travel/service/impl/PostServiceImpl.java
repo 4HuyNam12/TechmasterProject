@@ -1,9 +1,9 @@
 package com.vn.travel.service.impl;
 
 import com.vn.travel.constant.StatusCode;
-import com.vn.travel.dao.PostDAO;
 import com.vn.travel.entity.post.Post;
 import com.vn.travel.exception.RestApiException;
+import com.vn.travel.repository.PostRepository;
 import com.vn.travel.request.PostRequest;
 import com.vn.travel.response.ApiResponse;
 import com.vn.travel.response.post.PostResponse;
@@ -29,7 +29,7 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 public class PostServiceImpl implements PostService {
 
-    private PostDAO postDAO;
+    private PostRepository postRepository;
 
     // trả về list danh sách bài viết
 //    @Override
@@ -37,16 +37,16 @@ public class PostServiceImpl implements PostService {
         Pageable pageable = PageRequest.of(page, size);
         List<PostResponse> postResponses;
         if (StringUtils.isBlank(title)) {
-            List<Post> posts = postDAO.findAllByOrderByCreatedAtDesc(pageable);
+            List<Post> posts = postRepository.findAllByOrderByCreatedAtDesc(pageable);
             postResponses = MappingUtils.map(posts, PostResponse.class);
 
         } else {
             title = "%" + title + "%";
-            List<Post> posts = postDAO.searchByTitle(title.toLowerCase(), pageable);
+            List<Post> posts = postRepository.searchByTitle(title.toLowerCase(), pageable);
             postResponses = MappingUtils.map(posts, PostResponse.class);
         }
         title = HelperUtils.unAccent(title);
-        Long totalPage = postDAO.countAllByContent(title);
+        Long totalPage = postRepository.countAllByContent(title);
 
         Map<String, PostResponse> mapPost = postResponses.stream().collect(Collectors.toMap(PostResponse::getId, Function.identity()));
 
@@ -56,7 +56,7 @@ public class PostServiceImpl implements PostService {
 
     //    @Override
     public ApiResponse searchAll() {
-        List<Post> postList = postDAO.findAll();
+        List<Post> postList = postRepository.findAll();
         List<PostResponse> postResponses = MappingUtils.map(postList, PostResponse.class);
 
         return ApiResponse.builder().data(postResponses)
@@ -70,14 +70,14 @@ public class PostServiceImpl implements PostService {
         post.setContent(postRequest.getContent());
         post.setImage(postRequest.getImage());
         post.setTitle(postRequest.getTitle());
-        postDAO.save(post);
+        postRepository.save(post);
     }
 
     //  update bài viết
     @Override
     public void update(String postId, PostRequest postRequest) {
 
-        Optional<Post> postOptional = postDAO.getPostById(postId);
+        Optional<Post> postOptional = postRepository.getPostById(postId);
         if (postOptional.isPresent()) {
             Post post = postOptional.get();
             String image1 = FileStore.getFilePath(postRequest.getMultipartFile(), "-user");
@@ -94,7 +94,7 @@ public class PostServiceImpl implements PostService {
                 }
                 post.setImage(postRequest.getImage());
             }
-            postDAO.save(post);
+            postRepository.save(post);
             return;
         }
 
@@ -107,13 +107,13 @@ public class PostServiceImpl implements PostService {
         if (StringUtils.isEmpty(postId)) {
             throw new RestApiException(StatusCode.DATA_EMPTY);
         }
-        postDAO.deleteAllById(postId);
+        postRepository.deleteAllById(postId);
     }
 
     // trả về 1 bài viết theo id
     @Override
     public PostResponse getById(String postId) {
-        Optional<Post> postOptional = postDAO.getPostById(postId);
+        Optional<Post> postOptional = postRepository.getPostById(postId);
         if (postOptional.isPresent()) {
             Post post = postOptional.get();
             return MappingUtils.map(post, PostResponse.class);

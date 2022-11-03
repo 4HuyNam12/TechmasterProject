@@ -9,9 +9,10 @@ import Popup from '../popup/Popup';
 
 export default function Register({ show, handleClose }) {
     const { control, reset, handleSubmit, formState: { errors } } = useForm();
-    // let [message, setMessage] = useState()
     const [isPopup, setIsPopup] = useState(false);
 	const [popupMessage, setPopupMessage] = useState("");
+    const requiredMessage ="Trường này không được bỏ trống *";
+    const minMessage ="Hãy nhập ít nhất 3 ký tự *";
     const handleClosePopup = () => {
         let success = popupMessage;
         setIsPopup(false);
@@ -82,7 +83,8 @@ export default function Register({ show, handleClose }) {
                             rules={{ required: true, minLength: 3, maxLength: 50 }}
                             defaultValue=""
                         />
-                        {errors.name && <span style={{ color: 'red' }}>Trường này không được bỏ trống *</span>}
+                        {errors.name && <span style={{ color: 'red' }}>{requiredMessage}</span>}
+                        {errors.name?.type === "minLength" && <span style={{ color: 'red' }}>{minMessage}</span>}
                         <Controller
                             control={control}
                             render={({ field: { onChange, onBlur, value } }) => (
@@ -103,7 +105,8 @@ export default function Register({ show, handleClose }) {
                             defaultValue=""
                         />
                         {/* {errors.email && <span style={{ color: 'red' }}>Trường này không được bỏ trống *</span>} */}
-                        {errors.email?.type == "required" && <span style={{ color: 'red' }}>Trường này không được bỏ trống *</span>}
+                        {errors.email?.type == "required" && <span style={{ color: 'red' }}>{requiredMessage}</span>}
+                        {errors.email?.type === "minLength" && <span style={{ color: 'red' }}>{minMessage}</span>}
                         {errors.email?.type == "pattern" && <span style={{ color: 'red' }}>Email chưa đúng định dạng *</span>}
                         <Controller
                             control={control}
@@ -124,7 +127,7 @@ export default function Register({ show, handleClose }) {
                             rules={{ required: true, minLength: 1, maxLength: 50 }}
                             defaultValue=""
                         />
-                        {errors.password && <span style={{ color: 'red' }}>Trường này không được bỏ trống *</span>}
+                        {errors.password && <span style={{ color: 'red' }}>{requiredMessage}</span>}
                         <div style={{ display: 'flex', justifyContent: 'space-around', alignItems: 'center', marginBottom: 20 }}>
                             <div style={{ display: 'flex', alignItems: 'center' }}>
                                 <input
@@ -185,7 +188,8 @@ export default function Register({ show, handleClose }) {
                             rules={{ required: true, minLength: 3, maxLength: 50, pattern: /^\(?([0-9]{3})\)?[-. ]?([0-9]{3})[-. ]?([0-9]{4})$/ }}
                             defaultValue=""
                         />
-                        {errors.phone?.type == "required" && <span style={{ color: 'red' }}>Trường này không được bỏ trống *</span>}
+                        {errors.phone?.type == "required" && <span style={{ color: 'red' }}>{requiredMessage}</span>}
+                        {errors.phone?.type === "minLength" && <span style={{ color: 'red' }}>{minMessage}</span>}
                         {errors.phone?.type == "pattern" && <span style={{ color: 'red' }}>Số điện thoại chưa đúng định dạng *</span>}
 
 

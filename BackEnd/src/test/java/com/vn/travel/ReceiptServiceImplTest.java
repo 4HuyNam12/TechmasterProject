@@ -4,11 +4,11 @@ import com.vn.travel.common.ActivitiesType;
 import com.vn.travel.common.type.ApproveStatus;
 import com.vn.travel.common.type.BookingStatus;
 import com.vn.travel.common.type.RoomType;
-import com.vn.travel.dao.AccountDAO;
 import com.vn.travel.entity.BookingContact;
 import com.vn.travel.entity.account.Account;
 import com.vn.travel.entity.account.Role;
 import com.vn.travel.model.Contact;
+import com.vn.travel.repository.*;
 import com.vn.travel.service.EmailService;
 import com.vn.travel.utils.AuthenticationUtils;
 import com.vn.travel.utils.HelperUtils;
@@ -19,11 +19,6 @@ import com.vn.travel.entity.activities.ActivitiesGame;
 import com.vn.travel.entity.hotel.Hotel;
 import com.vn.travel.entity.hotel.HotelBookableItem;
 import com.vn.travel.entity.hotel.HotelBookingReceipt;
-import com.vn.travel.repository.FavoriteHotelRepository;
-import com.vn.travel.repository.HotelBookItemRepository;
-import com.vn.travel.repository.HotelBookingReceiptRepository;
-import com.vn.travel.repository.HotelImageRepository;
-import com.vn.travel.repository.HotelRepository;
 import com.vn.travel.repository.activities.ActivitiesBookingReceiptRepository;
 import com.vn.travel.repository.activities.ActivitiesGameRepository;
 import com.vn.travel.repository.activities.ActivitiesImageRepository;
@@ -56,7 +51,7 @@ public class ReceiptServiceImplTest {
 
 
     @Mock
-    AccountDAO accountDAO;
+    AccountRepository accountRepository;
     @Mock
     HotelRepository hotelRepository;
 
@@ -93,7 +88,7 @@ public class ReceiptServiceImplTest {
             .name("nam")
             .gender(true)
             .password("123456")
-            .role(new Role(1L, "ROLE_ADMIN"))
+            .role(1L)
             .image("aaaaaaaaaaaaa.jpg")
             .phone("0983302976")
             .password("123456")
@@ -160,7 +155,7 @@ public class ReceiptServiceImplTest {
 
         Mockito.when(hotelRepository.findFirstByCode(Mockito.anyString())).thenReturn(hotel);
 
-        Mockito.when(accountDAO.getAccountById(Mockito.anyString())).thenReturn(java.util.Optional.ofNullable(account));
+        Mockito.when(accountRepository.getAccountById(Mockito.anyString())).thenReturn(java.util.Optional.ofNullable(account));
 
         List<String> hotelImages = Collections.singletonList("aaaaaaaaaaaaa.jpg");
 
@@ -219,7 +214,7 @@ public class ReceiptServiceImplTest {
 
         Mockito.when(activitiesRepository.findFirstByCode(Mockito.anyString())).thenReturn(activities);
 
-        Mockito.when(accountDAO.getAccountById(Mockito.anyString())).thenReturn(Optional.ofNullable(account));
+        Mockito.when(accountRepository.getAccountById(Mockito.anyString())).thenReturn(Optional.ofNullable(account));
 
 
             List<String> activitiesImageList = activitiesImageRepository.findAllActivitiesCode(activities.getCode());
@@ -265,7 +260,7 @@ public class ReceiptServiceImplTest {
                 .name("nam")
                 .gender(true)
                 .password("123456")
-                .role(new Role(1L, "ROLE_ADMIN"))
+                .role(1L)
                 .image("aaaaaaaaaaaaa.jpg")
                 .phone("0983302976")
                 .password("123456")
@@ -309,7 +304,7 @@ public class ReceiptServiceImplTest {
 
         Mockito.when(hotelRepository.findFirstByCode(Mockito.anyString())).thenReturn(hotel);
 
-        Mockito.when(accountDAO.getAccountById(Mockito.anyString())).thenReturn(Optional.ofNullable(account));
+        Mockito.when(accountRepository.getAccountById(Mockito.anyString())).thenReturn(Optional.ofNullable(account));
 
         List<String> hotelImages = Arrays.asList("aaaaaaaaaaaaa.jpg");
 

@@ -1,8 +1,8 @@
 package com.vn.travel;
 
-
-import com.vn.travel.dao.AccountDAO;
 import com.vn.travel.model.AccountDTO;
+import com.vn.travel.repository.AccountRepository;
+import com.vn.travel.repository.RoleRepository;
 import com.vn.travel.utils.FileStore;
 import com.vn.travel.constant.Constants;
 import com.vn.travel.entity.account.Account;
@@ -34,10 +34,13 @@ public class AccountServiceImplTest {
     AccountServiceImpl accountServiceImpl;
 
     @Mock
-    AccountDAO accountDAO;
+    AccountRepository accountRepository;
 
     @Mock
     private EmailService emailService;
+
+    @Mock
+    private RoleRepository roleRepository;
 
     @Rule
     public ExpectedException exceptionRule = ExpectedException.none();
@@ -52,7 +55,7 @@ public class AccountServiceImplTest {
             .name("trav")
             .gender(true)
             .password("123456")
-            .role(new Role(1L, "ROLE_ADMIN"))
+            .role(1L)
             .image("aaaaaaaaaaaaa.jpg")
             .phone("0983302976")
             .password("123456")
@@ -110,8 +113,8 @@ public class AccountServiceImplTest {
 
         Page<Account> accounts = Mockito.mock(Page.class);
 
-        Mockito.when(accountDAO.searchAccountByNameEmailRole(Mockito.anyString(), Mockito.anyString(), Mockito.any(), Mockito.any())).thenReturn(accounts);
-        Mockito.when(accountDAO.countAccountByNameAndEmailAndRole(Mockito.anyString(), Mockito.anyString(), Mockito.any())).thenReturn(1L);
+        Mockito.when(accountRepository.searchAccountByNameEmailRole(Mockito.anyString(), Mockito.anyString(), Mockito.any(), Mockito.any())).thenReturn(accounts);
+        Mockito.when(accountRepository.countAccountByNameAndEmailAndRole(Mockito.anyString(), Mockito.anyString(), Mockito.any())).thenReturn(1L);
 
         ApiResponse apiResponse1 = accountServiceImpl.searchByNameEmailRole("travalar", "TravelVietNam@gmail.com", "ROLE_ADMIN", 1, 2);
 
@@ -122,7 +125,7 @@ public class AccountServiceImplTest {
     public void testGetById() {
 
         AccountResponse accountResponse1 = convert(account);
-        Mockito.when(accountDAO.getAccountById(Mockito.anyString())).thenReturn(java.util.Optional.ofNullable(account));
+        Mockito.when(accountRepository.getAccountById(Mockito.anyString())).thenReturn(java.util.Optional.ofNullable(account));
         accountResponse1 = accountServiceImpl.getById("1");
         MatcherAssert.assertThat(accountResponse1.getId(), Matchers.is("1"));
     }
@@ -132,7 +135,7 @@ public class AccountServiceImplTest {
 
         AccountResponse accountResponse1 = convert(account);
 
-        Mockito.when(accountDAO.getAccountByEmail(Mockito.anyString())).thenReturn(java.util.Optional.ofNullable(account));
+        Mockito.when(accountRepository.getAccountByEmail(Mockito.anyString())).thenReturn(java.util.Optional.ofNullable(account));
 
         accountResponse1 = accountServiceImpl.getByEmail("TravelVietNam@gmail.com");
 
@@ -143,7 +146,7 @@ public class AccountServiceImplTest {
     @Test
     public void testDelete() {
 
-        Mockito.doNothing().when(accountDAO).deleteAllById("1");
+        Mockito.doNothing().when(accountRepository).deleteAllById("1");
         accountServiceImpl.delete("1");
         MatcherAssert.assertThat(account.getId(), Matchers.is("1"));
     }
@@ -153,7 +156,7 @@ public class AccountServiceImplTest {
     public void testRegister() {
 
 
-        Mockito.when(accountDAO.save(account)).thenReturn(account);
+        Mockito.when(accountRepository.save(account)).thenReturn(account);
 
         accountServiceImpl.register(request);
 
@@ -163,7 +166,7 @@ public class AccountServiceImplTest {
     @Test
     public void testAddAccount() {
 
-        Mockito.when(accountDAO.save(account)).thenReturn(account);
+        Mockito.when(accountRepository.save(account)).thenReturn(account);
 
         accountServiceImpl.add(request);
 
@@ -175,7 +178,7 @@ public class AccountServiceImplTest {
     public void testUpdateAccount() {
 
 
-        Mockito.when(accountDAO.getAccountById(Mockito.any())).thenReturn(java.util.Optional.ofNullable(account));
+        Mockito.when(accountRepository.getAccountById(Mockito.any())).thenReturn(java.util.Optional.ofNullable(account));
         accountServiceImpl.update(request, "1");
         MatcherAssert.assertThat(request.getId(), Matchers.is("1"));
         MatcherAssert.assertThat(request.getRole(), Matchers.is("ROLE_MEMBER"));
@@ -187,7 +190,7 @@ public class AccountServiceImplTest {
     public void testUpdateProfileAccount() {
 
 
-        Mockito.when(accountDAO.getAccountById(Mockito.any())).thenReturn(java.util.Optional.ofNullable(account));
+        Mockito.when(accountRepository.getAccountById(Mockito.any())).thenReturn(java.util.Optional.ofNullable(account));
         accountServiceImpl.update(request, "1");
         MatcherAssert.assertThat(request.getId(), Matchers.is("1"));
         MatcherAssert.assertThat(request.getRole(), Matchers.is("ROLE_MEMBER"));
@@ -199,7 +202,7 @@ public class AccountServiceImplTest {
 
 
 
-        Mockito.when(accountDAO.getAccountById(Mockito.any())).thenReturn(java.util.Optional.ofNullable(account));
+        Mockito.when(accountRepository.getAccountById(Mockito.any())).thenReturn(java.util.Optional.ofNullable(account));
 
         String image1 = FileStore.getFilePath(request.getMultipartFile(), "-user");
         if (image1 != null) {
@@ -220,20 +223,21 @@ public class AccountServiceImplTest {
         }
         account.setDob(request.getDob());
 
-        Mockito.when(accountDAO.save(account)).thenReturn(account);
+        Mockito.when(accountRepository.save(account)).thenReturn(account);
         accountServiceImpl.updateProfile(request, "1");
 
 
     }
 
     public AccountResponse convert(Account account) {
+        String roleName = roleRepository.getNameById(account.getRole());
         AccountResponse accountResponse = AccountResponse.builder().build();
         accountResponse.setId(account.getId());
         accountResponse.setDob(account.getDob());
         accountResponse.setEmail(account.getEmail());
         accountResponse.setImage(account.getImage());
-        accountResponse.setRoleId(account.getRole().getId());
-        accountResponse.setRoleName(account.getRole().getName());
+        accountResponse.setRoleId(account.getRole());
+        accountResponse.setRoleName(roleName);
         accountResponse.setName(account.getName());
 
         String gender;

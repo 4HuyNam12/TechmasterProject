@@ -3,7 +3,7 @@ package com.vn.travel;
 import com.vn.travel.common.RestaurantType;
 import com.vn.travel.common.type.ApproveStatus;
 import com.vn.travel.common.type.BookingStatus;
-import com.vn.travel.dao.AccountDAO;
+import com.vn.travel.repository.AccountRepository;
 import com.vn.travel.utils.AuthenticationUtils;
 import com.vn.travel.utils.HelperUtils;
 import com.vn.travel.utils.MappingUtils;
@@ -59,7 +59,7 @@ public class ReceiptRestaurantServiceImplTest {
     @Mock
     EmailService emailService;
     @Mock
-    AccountDAO accountDAO;
+    AccountRepository accountRepository;
 
     @InjectMocks
     ReceiptRestaurantServiceImpl receiptRestaurantServiceImpl;
@@ -74,7 +74,7 @@ public class ReceiptRestaurantServiceImplTest {
 
     Account account = new Account("1", "nam", "nam@gmail.com"
             , "0983302976", true, "123456", "abc.jpg",
-            "05-06-99", true, new Role(1L, "ROLE_ADMIN"), "a");
+            "05-06-99", true,1L, "a");
 
     Contact contact = new Contact("nam", "nguyen",
             "nam@123", "0983302922");
@@ -96,7 +96,7 @@ public class ReceiptRestaurantServiceImplTest {
 
         Mockito.when(restaurantRepository.findFirstByCode(Mockito.anyString())).thenReturn(restaurant);
 
-        Mockito.when(accountDAO.getAccountById(Mockito.anyString())).thenReturn(java.util.Optional.ofNullable(account));
+        Mockito.when(accountRepository.getAccountById(Mockito.anyString())).thenReturn(java.util.Optional.ofNullable(account));
 
         Mockito.when(restaurantImageRepository.findAllByRestaurantCode(Mockito.anyString())).thenReturn(restaurantImages);
 

@@ -1,4 +1,4 @@
-package com.vn.travel.dao;
+package com.vn.travel.repository;
 
 import com.vn.travel.entity.post.Post;
 import org.springframework.data.domain.Pageable;
@@ -13,7 +13,7 @@ import java.util.Optional;
 
 @Repository
 @Transactional
-public interface PostDAO extends JpaRepository<Post, Long> {
+public interface PostRepository extends JpaRepository<Post, Long> {
 
     // trả về list danh sách post
     @Query(value = " SELECT * FROM Post  WHERE  vn_unaccent(title) LIKE :title  ORDER BY created_at desc ", nativeQuery = true)

@@ -1,4 +1,4 @@
-package com.vn.travel.dao;
+package com.vn.travel.repository;
 
 import com.vn.travel.entity.account.Account;
 import org.springframework.data.domain.Page;
@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface AccountDAO extends JpaRepository<Account, Long> {
+public interface AccountRepository extends JpaRepository<Account, Long> {
 
     Optional<Account> getAccountByEmail(String email);
 

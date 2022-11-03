@@ -30,8 +30,6 @@ public class SearchCustomerController {
         List<HotelDTO> hotels = customerService.getListHotel(title);
         List<RestaurantDTO> restaurants = customerService.getListRestaurant(title);
         List<ActivitiesDTO> activities = customerService.getListActivities(title);
-
-
         return SearchCustomerResponse.builder()
                 .hotels(hotels)
                 .restaurants(restaurants)

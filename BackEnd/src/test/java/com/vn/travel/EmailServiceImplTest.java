@@ -1,9 +1,7 @@
 package com.vn.travel;
 
-
-import com.vn.travel.dao.SendEmailAccountDao;
 import com.vn.travel.entity.account.Account;
-import com.vn.travel.entity.account.Role;
+import com.vn.travel.repository.SendEmailAccountRepository;
 import com.vn.travel.service.impl.EmailServiceImpl;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -17,7 +15,7 @@ import org.powermock.modules.junit4.PowerMockRunner;
 public class EmailServiceImplTest {
 
     @Mock
-    SendEmailAccountDao sendEmailAccountDao;
+    SendEmailAccountRepository sendEmailAccountRepository;
 
     @InjectMocks
     EmailServiceImpl emailServiceImpl;
@@ -30,7 +28,7 @@ public class EmailServiceImplTest {
             .name("nam")
             .gender(true)
             .password("123456")
-            .role(new Role(1L, "ROLE_ADMIN"))
+            .role(1L)
             .image("aaaaaaaaaaaaa.jpg")
             .phone("0983302976")
             .password("123456")
@@ -39,16 +37,16 @@ public class EmailServiceImplTest {
 
     @Test
     public void testUpdateResetPasswordToken() {
-        Mockito.when(sendEmailAccountDao.findAccountByEmail(Mockito.any())).thenReturn(account);
+        Mockito.when(sendEmailAccountRepository.findAccountByEmail(Mockito.any())).thenReturn(account);
 
-        Mockito.when(sendEmailAccountDao.save(Mockito.any())).thenReturn(account);
+        Mockito.when(sendEmailAccountRepository.save(Mockito.any())).thenReturn(account);
         emailServiceImpl.updateResetPasswordToken("abc" , "nam.nguyen@gmail.com");
 
     }
 
     @Test
     public void testGetByResetPasswordToken() {
-        Mockito.when(sendEmailAccountDao.findAccountByResetPasswordToken(Mockito.any())).thenReturn(account);
+        Mockito.when(sendEmailAccountRepository.findAccountByResetPasswordToken(Mockito.any())).thenReturn(account);
         emailServiceImpl.getByResetPasswordToken("abc");
     }
 
@@ -56,9 +54,9 @@ public class EmailServiceImplTest {
     @Test
     public void testUpdatePassWord() {
          String newPassword = "aaaaaaaaaa";
-        Mockito.when(sendEmailAccountDao.save(Mockito.any())).thenReturn(account);
+        Mockito.when(sendEmailAccountRepository.save(Mockito.any())).thenReturn(account);
 
-        sendEmailAccountDao.save(account);
+        sendEmailAccountRepository.save(account);
         emailServiceImpl.updatePassWord(account ,newPassword);
     }
 

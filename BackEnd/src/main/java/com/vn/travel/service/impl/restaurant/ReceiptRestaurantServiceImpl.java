@@ -2,7 +2,6 @@ package com.vn.travel.service.impl.restaurant;
 
 import com.vn.travel.common.type.BookingStatus;
 import com.vn.travel.constant.StatusCode;
-import com.vn.travel.dao.AccountDAO;
 import com.vn.travel.entity.BookingContact;
 import com.vn.travel.entity.account.Account;
 import com.vn.travel.entity.restaurant.Restaurant;
@@ -12,6 +11,7 @@ import com.vn.travel.exception.ErrorCode;
 import com.vn.travel.exception.GeneralException;
 import com.vn.travel.exception.ResourceNotFoundException;
 import com.vn.travel.exception.RestApiException;
+import com.vn.travel.repository.AccountRepository;
 import com.vn.travel.repository.FavoriteRepository;
 import com.vn.travel.repository.restaurant.RestaurantBookingReceiptRepository;
 import com.vn.travel.repository.restaurant.RestaurantImageRepository;
@@ -52,7 +52,7 @@ public class ReceiptRestaurantServiceImpl implements ReceiptRestaurantService {
     private EmailService emailService;
 
 
-    private AccountDAO accountDAO;
+    private AccountRepository accountRepository;
 
 
     @Override
@@ -74,7 +74,7 @@ public class ReceiptRestaurantServiceImpl implements ReceiptRestaurantService {
 
             Restaurant restaurant = restaurantRepository.findFirstByCode(bookingRestaurantRequest.getRestaurantCode());
 
-            Optional<Account> result = accountDAO.getAccountById(restaurant.getUserId());
+            Optional<Account> result = accountRepository.getAccountById(restaurant.getUserId());
             if (result.isPresent()) {
                 Account account = result.get();
                 List<String> restaurantImages = restaurantImageRepository.findAllByRestaurantCode(restaurant.getCode());

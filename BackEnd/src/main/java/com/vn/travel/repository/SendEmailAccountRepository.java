@@ -1,10 +1,10 @@
-package com.vn.travel.dao;
+package com.vn.travel.repository;
 
 import com.vn.travel.entity.account.Account;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
-public interface SendEmailAccountDao extends JpaRepository<Account, Long> {
+public interface SendEmailAccountRepository extends JpaRepository<Account, Long> {
 
 
     @Query("SELECT a FROM Account a WHERE a.email = ?1")

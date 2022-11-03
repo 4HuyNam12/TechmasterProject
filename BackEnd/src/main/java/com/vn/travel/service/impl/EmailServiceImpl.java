@@ -1,9 +1,10 @@
 package com.vn.travel.service.impl;
 
 import com.vn.travel.constant.Constants;
-import com.vn.travel.dao.SendEmailAccountDao;
+
 import com.vn.travel.entity.account.Account;
 import com.vn.travel.exception.RestApiException;
+import com.vn.travel.repository.SendEmailAccountRepository;
 import com.vn.travel.service.EmailService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -22,7 +23,7 @@ import java.util.Objects;
 public class EmailServiceImpl implements EmailService {
 
     @Autowired
-    private SendEmailAccountDao sendEmailAccountDao;
+    private SendEmailAccountRepository sendEmailAccountRepository;
 
     @Autowired
     JavaMailSender javaMailSender;
@@ -45,18 +46,18 @@ public class EmailServiceImpl implements EmailService {
 
     @Override
     public void updateResetPasswordToken(String token ,String email) {
-        Account account = sendEmailAccountDao.findAccountByEmail(email);
+        Account account = sendEmailAccountRepository.findAccountByEmail(email);
         if (Objects.isNull(account)) {
             throw new RestApiException(4,"Could not find any customer with the email : " + email);
         }
 
             account.setResetPasswordToken(token);
-            sendEmailAccountDao.save(account);
+            sendEmailAccountRepository.save(account);
     }
 
     @Override
     public Account getByResetPasswordToken(String token) {
-        return sendEmailAccountDao.findAccountByResetPasswordToken(token);
+        return sendEmailAccountRepository.findAccountByResetPasswordToken(token);
     }
 
     @Override
@@ -66,7 +67,7 @@ public class EmailServiceImpl implements EmailService {
         account.setPassword(encodedPassword);
 
         account.setResetPasswordToken(null);
-        sendEmailAccountDao.save(account);
+        sendEmailAccountRepository.save(account);
 
     }
 }

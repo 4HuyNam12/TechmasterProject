@@ -1,10 +1,11 @@
 package com.vn.travel.security;
 
 import com.vn.travel.constant.StatusCode;
-import com.vn.travel.dao.AccountDAO;
+import com.vn.travel.exception.RestApiException;
 import com.vn.travel.entity.account.Account;
 import com.vn.travel.exception.JwtCustomException;
-import com.vn.travel.exception.RestApiException;
+import com.vn.travel.repository.RoleRepository;
+import com.vn.travel.repository.AccountRepository;
 import com.vn.travel.response.token.TokenResponse;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtException;
@@ -18,7 +19,6 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
@@ -41,7 +41,10 @@ public class JwtTokenProvider {
     private UserDetailsService myUserDetails;
 
     @Autowired
-    private AccountDAO accountDAO;
+    private AccountRepository accountRepository;
+
+    @Autowired
+    private RoleRepository roleRepository;
 
     @PostConstruct
     protected void init() {
@@ -49,9 +52,11 @@ public class JwtTokenProvider {
     }
 
     public TokenResponse createToken(String username) {
-        Optional<Account> result = accountDAO.getAccountByEmail(username);
+        Optional<Account> result = accountRepository.getAccountByEmail(username);
+
         if (result.isPresent()) {
             Account account = result.get();
+            String roleName =  roleRepository.getNameById(account.getRole());
             Claims claims = Jwts.claims().setSubject(username);
             Date now = new Date();
             Date validity = new Date(now.getTime() + validityInMilliseconds);
@@ -65,8 +70,8 @@ public class JwtTokenProvider {
             authenDTO.setExpirationTime(validityInMilliseconds);
             authenDTO.setAccessToken(accessToken);
             authenDTO.setAccountId(account.getId());
-            authenDTO.setRoleId(account.getRole().getId());
-            authenDTO.setRoleName(account.getRole().getName());
+            authenDTO.setRoleId(account.getRole());
+            authenDTO.setRoleName(roleName);
             return authenDTO;
         }
         throw new RestApiException(StatusCode.ACCOUNT_NOT_EXIST);

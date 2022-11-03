@@ -2,10 +2,11 @@ package com.vn.travel.controller.account;
 
 import com.vn.travel.constant.Constants;
 import com.vn.travel.constant.PropertyKeys;
-import com.vn.travel.dao.SendEmailAccountDao;
+
 import com.vn.travel.entity.account.Account;
 import com.vn.travel.exception.RestApiException;
 import com.vn.travel.model.UserPrincipal;
+import com.vn.travel.repository.SendEmailAccountRepository;
 import com.vn.travel.request.account.AccountRequest;
 import com.vn.travel.request.account.ChangePasswordRequest;
 import com.vn.travel.request.account.ForwardPasswordRequest;
@@ -29,7 +30,7 @@ import java.util.Objects;
 @AllArgsConstructor
 public class AccountController {
 
-    private SendEmailAccountDao sendEmailAccountDao;
+    private SendEmailAccountRepository sendEmailAccountRepository;
 
     private EmailService emailService;
 
@@ -78,7 +79,7 @@ public class AccountController {
     public ResponseEntity<?> resetPassword(HttpServletRequest request,
                                            @RequestBody ForwardPasswordRequest forwardPasswordRequest) {
         String token = forwardPasswordRequest.getToken();
-        Account account = sendEmailAccountDao.findAccountByResetPasswordToken(token);
+        Account account = sendEmailAccountRepository.findAccountByResetPasswordToken(token);
         if (Objects.isNull(account)) {
             throw new RestApiException(400, "token false");
         }
