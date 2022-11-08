@@ -51,7 +51,7 @@ export default function BookingTicket() {
                     numberTicketAdult: data?.numberTicketAdult
                 }, token)
                 if (resp.ok) {
-                    handleOpenPopup("Bạn đã book thành công!")
+                    // handleOpenPopup("Bạn đã book thành công!")
                     let response = await resp.json();
                     history.push({
                         pathname: '/booking-ticket-result',

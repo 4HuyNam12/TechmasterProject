@@ -28,7 +28,7 @@ public class ActivitiesController {
 
   // api book activities
     @PostMapping("/book")
-    public BaseResponse bookingHotel(@Valid @RequestBody BookingActivitiesRequest bookingRequest) {
+    public BaseResponse bookingActivities(@Valid @RequestBody BookingActivitiesRequest bookingRequest) {
         return receiptService.bookingActivities(bookingRequest);
     }
 

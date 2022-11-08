@@ -31,9 +31,10 @@ public class ActivitiesBookingReceipt extends BaseTimestamp {
     @Column(name = "booking_id")
     private String bookingId;
 
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "contact_id")
-    private BookingContact contact;
+//    @OneToOne(cascade = CascadeType.ALL)
+//    @JoinColumn(name = "contact_id")
+    @Column(name = "contact_id")
+    private String contact;
 
     @Column(name = "status")
     @Enumerated(EnumType.STRING)

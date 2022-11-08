@@ -10,7 +10,6 @@ import BillBookingRoomResult from '../../component/booking/bill-result/BillBooki
 export default function BookingRoomResultPage() {
     let location = useLocation();
 
-    console.log(location?.state?.data);
     let history = useHistory()
     return (
         <>

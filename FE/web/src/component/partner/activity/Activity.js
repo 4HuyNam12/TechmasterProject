@@ -3,6 +3,7 @@ import Pagination from "react-js-pagination";
 import API from '../../../lib/API';
 import Item from './Item';
 import ModalAdd from './ModalAdd';
+import {statusHotel} from "../../../utils/amenities";
 
 export default function Activity() {
     const [data, setData] = useState();
@@ -51,6 +52,32 @@ export default function Activity() {
                     </div>
                 </section>
                 <ModalAdd search={search} handleClose={handleClose} handleShow={handleShow} show={show} />
+                <div className="wrapp_search">
+                    <input
+                        placeholder="Tiêu đề"
+                        value={name}
+                        onChange={e => setName(e.target.value)} />
+                    <select
+                        value={name}
+                        onChange={(e) => setName(e.target.value)}
+                    >
+                        <option value="">Tất cả</option>
+                        {statusHotel?.map((item, index) => {
+                            return (
+                                <option key={index} value={item?.value}>{item?.name}</option>
+                            )
+                        })}
+                    </select>
+                    <button
+                        onClick={() => {
+                            search()
+                            setActivePage(1)
+                        }}
+                    > <svg style={{ width: 24, height: 24 }} viewBox="0 0 24 24" color="#fff">
+                        <path fill="currentColor" d="M9.5,3A6.5,6.5 0 0,1 16,9.5C16,11.11 15.41,12.59 14.44,13.73L14.71,14H15.5L20.5,19L19,20.5L14,15.5V14.71L13.73,14.44C12.59,15.41 11.11,16 9.5,16A6.5,6.5 0 0,1 3,9.5A6.5,6.5 0 0,1 9.5,3M9.5,5C7,5 5,7 5,9.5C5,12 7,14 9.5,14C12,14 14,12 14,9.5C14,7 12,5 9.5,5Z" />
+                    </svg></button>
+
+                </div>
                 {/* <div className="wrapp_search">
                     <input
                         placeholder="Tiêu đề"

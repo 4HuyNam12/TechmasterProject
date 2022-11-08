@@ -65,6 +65,7 @@ export default function Restaurant() {
                         </svg></button>
 
                 </div> */}
+
                 <div className="box-body">
                     <table id="example1" className="table table-bordered table-striped">
                         <thead>
