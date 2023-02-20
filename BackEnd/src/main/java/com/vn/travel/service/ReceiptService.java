@@ -6,6 +6,7 @@ import com.vn.travel.request.activities.BookingActivitiesRequest;
 import com.vn.travel.request.hotel.BookingRequest;
 import com.vn.travel.request.hotel.HotelApproveBookingRequest;
 import com.vn.travel.response.BaseResponse;
+import org.springframework.stereotype.Service;
 
 public interface ReceiptService {
 

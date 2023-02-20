@@ -195,7 +195,7 @@ public class ReceiptRestaurantServiceImpl implements ReceiptRestaurantService {
             content.append("<p> Số Lượng Trẻ Em   :  \"" + receipt.getNumberChild() + "\"   </p>");
             content.append("<p> Tên Nhà Hàng   :  \"" + receipt.getRestaurantInfoDTO().getTitle() + "\"   </p>");
             content.append("<p> Địa Chỉ Nhà Hàng   :  \"" + receipt.getRestaurantInfoDTO().getAddress() + "\"   </p>");
-            String subject = "TravelVietNam ---THÔNG TIN DỊCH VỤ";
+            String subject = "com.vn.travel ---THÔNG TIN DỊCH VỤ";
 
             emailService.sendSimpleMessage(receipt.getContact().getEmail(), subject, content.toString());
         } catch (Exception e) {
@@ -212,7 +212,7 @@ public class ReceiptRestaurantServiceImpl implements ReceiptRestaurantService {
             content.append("<p> Yêu cầu của bạn đã bị hủy  , do một số lý do nên yêu cầu của bạn k được chấp nhận  </p>");
             content.append("<p  Có điều gì thắc mắc xin liên hệ với SĐT của nhà hàng : \"" + receipt.getRestaurantInfoDTO().getPhonePartner() + "\"     </p>");
             content.append("<p> Hẹn Gặp bạn vào lần sau     </p>");
-            String subject = "TravelVietNam ---THÔNG TIN DỊCH VỤ";
+            String subject = "com.vn.travel ---THÔNG TIN DỊCH VỤ";
 
             emailService.sendSimpleMessage(receipt.getContact().getEmail(), subject, content.toString());
         } catch (Exception e) {

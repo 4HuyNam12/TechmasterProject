@@ -122,7 +122,7 @@ public class AccountServiceImpl implements AccountService, UserDetailsService {
             content.append("<p>mật khẩu của bạn là : 123@123aB  </p>");
             content.append("<p>Yêu Cầu bạn đổi mật khẩu khi đăng nhập vào hệ thống  </p>");
 
-            String subject = "TravelVietNam ---THÔNG TIN TÀI KHOẢN";
+            String subject = "com.vn.travel ---THÔNG TIN TÀI KHOẢN";
             emailService.sendSimpleMessage(email, subject, content.toString());
         } catch (Exception e) {
             log.debug(e);

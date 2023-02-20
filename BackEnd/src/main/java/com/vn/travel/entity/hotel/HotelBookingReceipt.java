@@ -1,9 +1,10 @@
-package com.vn.travel.entity.activities;
+package com.vn.travel.entity.hotel;
 
 import com.vn.travel.common.type.BookingStatus;
 import com.vn.travel.entity.BaseTimestamp;
 import com.vn.travel.entity.BookingContact;
-import com.vn.travel.response.activities.ActivitiesInfoDTO;
+import com.vn.travel.response.hotel.HotelInfoDTO;
+import com.vn.travel.response.hotel.PackageDTO;
 import com.vladmihalcea.hibernate.type.json.JsonBinaryType;
 import lombok.*;
 import org.hibernate.annotations.GenericGenerator;
@@ -20,8 +21,8 @@ import javax.persistence.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name = "activities_receipt")
-public class ActivitiesBookingReceipt extends BaseTimestamp {
+@Table(name = "hotel_receipt")
+public class HotelBookingReceipt extends BaseTimestamp {
 
     @Id
     @GeneratedValue(generator = "uuid")
@@ -31,6 +32,9 @@ public class ActivitiesBookingReceipt extends BaseTimestamp {
     @Column(name = "booking_id")
     private String bookingId;
 
+    @Column(name = "total_nights")
+    private Integer totalNights;
+
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "contact_id")
     private BookingContact contact;
@@ -39,24 +43,25 @@ public class ActivitiesBookingReceipt extends BaseTimestamp {
     @Enumerated(EnumType.STRING)
     private BookingStatus status;
 
-    @Column(name = "travel_date")
-    private Integer travelDate;
+    @Column(name = "from_date")
+    private Integer checkin;
 
-    @Column(name = "number_ticket_child")
-    private Integer numberTicketChild;
-
-    @Column(name = "number_ticket_adult")
-    private Integer numberTicketAdult;
-
-    @Column(name = "phone_partner")
-    private String phonePartner;
+    @Column(name = "to_date")
+    private Integer checkout;
 
     @Column(name = "price")
     private Double price;
 
     @Type(type = "jsonb")
-    @Column(name = "activities_info", columnDefinition = "jsonb")
-    private ActivitiesInfoDTO activitiesInfoDTO;
+    @Column(name = "hotel_info", columnDefinition = "jsonb")
+    private HotelInfoDTO hotelInfoDTO;
+
+    @Column(name = "phone_partner")
+    private String phonePartner;
+
+    @Type(type = "jsonb")
+    @Column(name = "package_info", columnDefinition = "jsonb")
+    private PackageDTO packageInfo;
 
     @Column(name = "partner_id")
     private String partnerId;
